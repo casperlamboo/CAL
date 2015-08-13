@@ -64,14 +64,14 @@ export default class Shape extends Matrix {
 		return true;
 	}
 
-	getBoundingBox () {
+	getBoundingBox (applyMatrix = false) {
 		var minX = Infinity;
 		var minY = Infinity;
 		var maxX = -Infinity;
 		var maxY = -Infinity;
 
 		for (var i = 0; i < this.points.length; i ++) {
-			var point = this.points[i];
+			var point = applyMatrix ? this.points[i].applyMatrix(this) : this.points[i];
 
 			minX = (point.x < minX) ? point.x : minX;
 			minY = (point.y < minY) ? point.y : minY;
@@ -96,8 +96,8 @@ export default class Shape extends Matrix {
 		return pointA.subtract(pointB).normal().normalize();
 	}
 
-	setContext (context, matrix) {
-		var matrix = matrix || this;
+	setContext (context, matrix = this) {
+		var matrix = matrix;
 
 		context.beginPath();
 

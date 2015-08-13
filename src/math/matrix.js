@@ -49,10 +49,6 @@ export default class Matrix {
 		this._sx = sx;
 
 		delete this._matrix;
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
-		}
 	}
 
 	get sy () {
@@ -67,10 +63,6 @@ export default class Matrix {
 		this._sy = sy;
 
 		delete this._matrix;
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
-		}
 	}
 
 	get rotation () {
@@ -85,10 +77,6 @@ export default class Matrix {
 		this._rotation = rotation;
 
 		delete this._matrix;
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
-		}
 	}
 
 	get x () {
@@ -104,10 +92,6 @@ export default class Matrix {
 
 		if (this._matrix !== undefined) {
 			this._matrix[2] = x;
-		}
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
 		}
 	}
 
@@ -144,22 +128,13 @@ export default class Matrix {
 	}
 
 	set matrix (m) {
-		if (m instanceof Array) {
-			this._matrix = m;
+		this._matrix = m;
 
-			delete this._x;
-			delete this._y;
-			delete this._sx;
-			delete this._sy;
-			delete this._rotation;
-		}
-		else {
-			this.set(m);
-		}
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
-		}
+		delete this._x;
+		delete this._y;
+		delete this._sx;
+		delete this._sy;
+		delete this._rotation;
 	}
 
 	identity () {
@@ -174,10 +149,6 @@ export default class Matrix {
 		this._sx = 1;
 		this._sy = 1;
 		this._rotation = 0;
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
-		}
 
 		return this;
 	}
@@ -212,17 +183,13 @@ export default class Matrix {
 		return this;
 	}
 
-	setMatrix (matrix) {
+	copyMatrix (matrix) {
 		this._matrix = matrix.matrix;
 		this._x = matrix.x;
 		this._y = matrix.y;
 		this._sx = matrix.sx;
 		this._sy = matrix.sy;
 		this._rotation = matrix.rotation;
-
-		if (this.onchangetransfrom !== undefined) {
-			this.onchangetransfrom();
-		}
 
 		return this;
 	}

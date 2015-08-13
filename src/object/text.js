@@ -37,7 +37,7 @@ export default class Text extends Matrix {
 		context.textAlign = this.align;
 		context.textBaseline = this.baseline;
 		
-		this.color.setColor(context);
+		this.color.setContext(context);
 		
 		context.fillText(text, x, y);
 	}

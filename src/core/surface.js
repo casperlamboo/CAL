@@ -13,11 +13,7 @@ export default class Surface extends Draw {
 		this.setSize(options.width, options.height, options.pixelRatio);
 	}
 
-	setSize (width, height, pixelRatio) {
-		var width = width || this.image.width;
-		var height = height || this.image.height;
-		var pixelRatio = (pixelRatio ? pixelRatio : 1);
-
+	setSize (width = this.image.width, height = this.image.height, pixelRatio = 1) {
 		this.image.width = width * pixelRatio;
 		this.image.height = height * pixelRatio;
 
@@ -39,7 +35,7 @@ export default class Surface extends Draw {
 
 	clear () {
 		if (this.clearColor) {
-			this.clearColor.setColor(this.context);
+			this.clearColor.setContext(this.context);
 			this.context.fillRect(0, 0, this.image.width, this.image.height);
 		}
 		else {
@@ -49,12 +45,7 @@ export default class Surface extends Draw {
 		return this;
 	}
 
-	getImageData (x, y, width, height) {
-		var x = x || 0;
-		var y = y || 0;
-		var width = width || this.image.width;
-		var height = height || this.image.height;
-
+	getImageData (x = 0, y = 0, width = this.image.width, height = this.image.height) {
 		return this.context.getImageData(x, y, width, height);
 	}
 

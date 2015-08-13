@@ -287,8 +287,8 @@ export default class Group extends Surface {
 	}
 
 	sort () {
-		this.objects.sort(function (a, b) {
-			return (a.depth || 0) - (b.depth || 0);
+		this.objects.sort(({depth:a = 0}, {depth:b = 0}) => {
+			return a - b;
 		});
 	}
 

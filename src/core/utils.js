@@ -5,17 +5,14 @@
 //Global Composite Operation
 //Linear Gradient
 //Radial Gradient
-export let math = {
+export let MathExtended = {
 	clamb: function (value, min, max) {
 		return (value > min) ? ((value < max) ? value : max) : min;
 	},
 	randomInt: function (min, max) {
 		return Math.floor(CAL.Math.random(min, max + 1));
 	},
-	random: function (min, max) {
-		min = (min === undefined) ? 0 : min;
-		max = (max === undefined) ? 1 : max;
-
+	random: function (min = 0, max = 1) {
 		return Math.random() * (max - min) + min;
 	},
 	sign: function (value) {
@@ -40,7 +37,7 @@ export let math = {
 	}
 };
 
-export let easings = {
+export let Easings = {
 	bounceEaseOut: function (dt, b, c, d) {
 		if ((dt /= d) < (1 / 2.75)) {
 			return c * (7.5625 * dt * dt) + b;

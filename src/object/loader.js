@@ -1,5 +1,4 @@
 export default class Loader {
-
 	constructor (objects = []) {
 		this.objects = objects;
 	}

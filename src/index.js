@@ -27,3 +27,9 @@ export let Text = text;
 export let TimeLine = timeLine;
 export let Tween = tween;
 export let Shape = shape;
+
+window.requestAnimFrame = (() => {
+	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || ((callback) => {
+		setTimeout(callback, 1000/60);
+	});
+}());

@@ -139,5 +139,4 @@ export default class Vector {
 
 		context.stroke();
 	}
-
 };
