@@ -1,6 +1,6 @@
-"use strict";
+import Shape from '../object/shape.js';
 
-CAL.Polygon = class extends CAL.Shape {
+export default class Polygon extends Shape {
 
 	constructor (angles, radius, options) {
 		super(options);
@@ -8,17 +8,17 @@ CAL.Polygon = class extends CAL.Shape {
 		this.set(angles);
 	}
 
-	set (angles, radius) {
+	set (angles = 8, radius = 100) {
 		this.points = [];
 
-		this.angles = angles || 8;
-		this.radius = radius || 100;
+		this.angles = angles;
+		this.radius = radius;
 
 		for (var rad = 0; rad < Math.PI*2; rad += Math.PI*2 / this.angles) {
 			var x = Math.cos(rad) * this.radius;
 			var y = Math.sin(rad) * this.radius;
 
-			this.addPoint(new CAL.BezierPoint(new CAL.Vector(x, y), null, null));
+			this.addPoint(new CAL.Vector(x, y));
 		}
 	}
 

@@ -1,6 +1,7 @@
-"use strict";
+import Shape from '../object/shape.js';
+import Vector from '../math/vector.js';
 
-CAL.Star = class extends CAL.Shape {
+export default class Star extends Shape {
 
 	constructor (rays, outerRadius, innerRadius, options) {
 		super(options);
@@ -8,28 +9,28 @@ CAL.Star = class extends CAL.Shape {
 		this.set(rays, outerRadius, innerRadius);
 	}
 
-	set (rays, outerRadius, innerRadius) {
-		this.rays = rays || 5;
-		this.outerRadius = (typeof outerRadius === "number") ? outerRadius : 100;
-		this.innerRadius = (typeof innerRadius === "number") ? innerRadius : 50;
+	set (rays = 5, outerRadius = 100, innerRadius = 50) {
+		this.rays = rays;
+		this.outerRadius = outerRadius;
+		this.innerRadius = innerRadius;
 
 		this.points = [];
 
-		var even = true;
+		var even = false;
 		for (var rad = 0; rad <= Math.PI*2; rad += Math.PI / this.rays) {
 			var radius = even ? this.outerRadius : this.innerRadius;
 
-			var x = Math.cos(rad) * radius;
-			var y = Math.sin(rad) * radius;
+			var x = Math.sin(rad) * radius;
+			var y = Math.cos(rad) * radius;
 
-			this.addPoint(new CAL.BezierPoint(new CAL.Vector(x, y), null, null));
+			this.addPoint(new Vector(x, y));
 
 			even = !even;
 		}
 	}
 
 	toShape () {
-		return new CAL.Shape({
+		return new Shape({
 			points: this.points, 
 			closedPath: true, 
 			lineColor: this.lineColor, 

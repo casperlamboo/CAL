@@ -12,6 +12,8 @@ import text from './object/text.js';
 import timeLine from './object/timeline.js';
 import tween from './object/tween.js';
 import shape from './object/shape.js';
+import star from './shapes/star.js';
+import polygon from './shapes/polygon.js';
 
 export let Draw = draw;
 export let Group = group;
@@ -27,6 +29,8 @@ export let Text = text;
 export let TimeLine = timeLine;
 export let Tween = tween;
 export let Shape = shape;
+export let Star = star;
+export let Polygon = polygon;
 
 window.requestAnimFrame = (() => {
 	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || ((callback) => {

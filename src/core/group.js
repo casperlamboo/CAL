@@ -49,7 +49,7 @@ export default class Group extends Surface {
 	handleEvent (event) {
 		if (this.useCanvas) {
 			switch (event.type) {
-				case "mousedown":
+				case 'mousedown':
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
@@ -63,9 +63,9 @@ export default class Group extends Surface {
 					this.mouse.down = true;
 
 					this.mouseDown(this.mouse);
-				break;
+					break;
 
-				case "mouseup":
+				case 'mouseup':
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
@@ -80,9 +80,9 @@ export default class Group extends Surface {
 					this.mouse.start.identity();
 					this.mouse.delta.identity();
 					this.mouse.length = 0;
-				break;
+					break;
 
-				case "mousemove":
+				case 'mousemove':
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
@@ -100,9 +100,9 @@ export default class Group extends Surface {
 					}
 
 					this.mouseMove(this.mouse);
-				break;
+					break;
 
-				case "touchstart":
+				case 'touchstart':
 					event.preventDefault();
 
 					if (event.touches.length === 1) {
@@ -122,9 +122,9 @@ export default class Group extends Surface {
 
 						this.mouseDown(this.mouse);
 					}
-				break;
+					break;
 
-				case "touchmove":
+				case 'touchmove':
 					event.preventDefault();
 
 					var touch = event.touches[0];
@@ -146,9 +146,9 @@ export default class Group extends Surface {
 					}
 
 					this.mouseMove(this.mouse);
-				break;
+					break;
 
-				case "touchend":
+				case 'touchend':
 					event.preventDefault();
 
 					if (this.useCanvas && event.touches.length === 0) {
@@ -160,29 +160,29 @@ export default class Group extends Surface {
 						this.mouse.delta.identity();
 						this.mouse.length = 0;
 					}
-				break;
+					break;
 
-				case "keydown":
+				case 'keydown':
 					if (!this.keysDown[event.keyCode]) {
 						this.keysDown[event.keyCode] = true;
 						this.keyDown(event.keyCode);
 					}
-				break;
+					break;
 
-				case "keyup":
+				case 'keyup':
 					this.keysDown[event.keyCode] = false;
 
 					this.keyUp(event.keyCode);
-				break;
+					break;
 
-				case "blur":
+				case 'blur':
 					this.focus = false;
-				break;
+					break;
 
-				case "focus":
+				case 'focus':
 					this.lastTime = new Date().getTime();
 					this.focus = true;
-				break;
+					break;
 			}
 		}
 	}
@@ -266,8 +266,8 @@ export default class Group extends Surface {
 
 				this.objects.splice(index, 1);
 
+				object.parent = false;
 				if (object.active && object.remove !== undefined) {
-					object.parent = false;
 					object.remove(this);
 				}
 			}
@@ -284,6 +284,9 @@ export default class Group extends Surface {
 			var object = this.itemsToRemove[i];
 			this.remove(object);
 		}
+
+		this.itemsToRemove = [];
+		this.itemsToAdd = [];
 	}
 
 	sort () {

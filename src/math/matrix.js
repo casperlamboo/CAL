@@ -40,6 +40,7 @@ export default class Matrix {
 	get sx () {
 		if (this._sx === undefined) {
 			this._sx = Math.sqrt(Math.pow(this._matrix[0], 2) + Math.pow(this._matrix[3], 2));
+			// this._sx = Math.sqrt(Math.pow(this._matrix[1], 2) + Math.pow(this._matrix[4], 2));
 		}
 
 		return this._sx;
@@ -119,8 +120,7 @@ export default class Matrix {
 
 			this._matrix = [
 				this._sx * cos, this._sx * -sin, this._x,
-				this._sy * sin, this._sy * cos, this._y, 
-				0, 0, 1
+				this._sy * sin, this._sy * cos, this._y
 			];
 		}
 
@@ -140,8 +140,7 @@ export default class Matrix {
 	identity () {
 		this._matrix = [
 			1, 0, 0,
-			0, 1, 0, 
-			0, 0, 1
+			0, 1, 0
 		];
 
 		this._x = 0;
@@ -158,21 +157,23 @@ export default class Matrix {
 		var b = m.matrix;
 
 		return new Matrix([
-			a[0]*b[0] + a[3]*b[1] + a[6]*b[2], a[1]*b[0] + a[4]*b[1] + a[7]*b[2], a[2]*b[0] + a[5]*b[1] + a[8]*b[2],
-			a[0]*b[3] + a[3]*b[4] + a[6]*b[5], a[1]*b[3] + a[4]*b[4] + a[7]*b[5], a[2]*b[3] + a[5]*b[4] + a[8]*b[5],
-			a[0]*b[6] + a[3]*b[7] + a[6]*b[8], a[1]*b[6] + a[4]*b[7] + a[7]*b[8], a[2]*b[6] + a[5]*b[7] + a[8]*b[8]
+			a[0]*b[0] + a[3]*b[1], a[1]*b[0] + a[4]*b[1], a[2]*b[0] + a[5]*b[1] + b[2],
+			a[0]*b[3] + a[3]*b[4], a[1]*b[3] + a[4]*b[4], a[2]*b[3] + a[5]*b[4] + b[5]
 		]);
+	}
+
+	determinant () {
+		var m = this.matrix;
+		return 1 / (m[0]*m[4] - m[1]*m[3]);
 	}
 
 	inverseMatrix () {
 		var m = this.matrix;
-
-		var det = 1 / (m[0]*m[4]*m[8] + m[1]*m[5]*m[6] + m[2]*m[3]*m[7] - m[1]*m[3]*m[8] - m[0]*m[5]*m[7] - m[2]*m[4]*m[6]);
+		var det = this.determinant();
 
 		return new Matrix([
-			 det * (m[4]*m[8] - m[5]*m[7]), -det * (m[1]*m[8] - m[2]*m[7]),  det * (m[1]*m[5] - m[2]*m[4]),
-			-det * (m[3]*m[8] - m[5]*m[6]),  det * (m[0]*m[8] - m[2]*m[6]), -det * (m[0]*m[5] - m[2]*m[3]),
-			 det * (m[3]*m[7] - m[4]*m[6]), -det * (m[0]*m[7] - m[1]*m[6]),  det * (m[0]*m[4] - m[1]*m[3])
+			 det * m[4], -det * m[1],  det * (m[1]*m[5] - m[2]*m[4]),
+			-det * m[3],  det * m[0], -det * (m[0]*m[5] - m[2]*m[3])
 		]);
 	}
 
@@ -184,7 +185,7 @@ export default class Matrix {
 	}
 
 	copyMatrix (matrix) {
-		this._matrix = matrix.matrix;
+		this._matrix = [...matrix.matrix]
 		this._x = matrix.x;
 		this._y = matrix.y;
 		this._sx = matrix.sx;
