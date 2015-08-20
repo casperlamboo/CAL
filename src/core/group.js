@@ -66,6 +66,7 @@ export default class Group extends Surface {
 					break;
 
 				case 'mouseup':
+				case 'mouseout':
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
@@ -191,18 +192,22 @@ export default class Group extends Surface {
 		this.image.addEventListener('mousedown', this);
 		this.image.addEventListener('mouseup', this);
 		this.image.addEventListener('mousemove', this);
+		this.image.addEventListener('mouseout', this);
 		this.image.addEventListener('touchstart', this);
 		this.image.addEventListener('touchmove', this);
 		this.image.addEventListener('touchend', this);
+		this.image.addEventListener('touchout', this);
 	}
 
 	_removeEventListeners () {
 		this.image.removeEventListener('mousedown', this);
 		this.image.removeEventListener('mouseup', this);
 		this.image.removeEventListener('mousemove', this);
+		this.image.removeEventListener('mouseout', this);
 		this.image.removeEventListener('touchstart', this);
 		this.image.removeEventListener('touchmove', this);
 		this.image.removeEventListener('touchend', this);
+		this.image.removeEventListener('touchout', this);
 	}
 
 	setCanvas (canvas) {
