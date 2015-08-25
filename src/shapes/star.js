@@ -6,6 +6,8 @@ export default class Star extends Shape {
 	constructor (rays, outerRadius, innerRadius, options) {
 		super(options);
 
+		this.closePath = true;
+
 		this.set(rays, outerRadius, innerRadius);
 	}
 
@@ -17,7 +19,7 @@ export default class Star extends Shape {
 		this.points = [];
 
 		var even = false;
-		for (var rad = 0; rad <= Math.PI*2; rad += Math.PI / this.rays) {
+		for (var rad = 0; rad < Math.PI*2; rad += Math.PI / this.rays) {
 			var radius = even ? this.outerRadius : this.innerRadius;
 
 			var x = Math.sin(rad) * radius;

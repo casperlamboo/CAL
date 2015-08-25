@@ -1,3 +1,5 @@
+import {MathExtended} from '../core/utils.js';
+
 export default class Matrix {
 
 	constructor (options) {
@@ -40,7 +42,6 @@ export default class Matrix {
 	get sx () {
 		if (this._sx === undefined) {
 			this._sx = Math.sqrt(Math.pow(this._matrix[0], 2) + Math.pow(this._matrix[3], 2));
-			// this._sx = Math.sqrt(Math.pow(this._matrix[1], 2) + Math.pow(this._matrix[4], 2));
 		}
 
 		return this._sx;
@@ -54,7 +55,7 @@ export default class Matrix {
 
 	get sy () {
 		if (this._sy === undefined) {
-			this._sy = Math.sqrt(Math.pow(this._matrix[1], 2) + Math.pow(this._matrix[4], 2));
+			this._sy = MathExtended.sign(this.determinant()) * Math.sqrt(Math.pow(this._matrix[1], 2) + Math.pow(this._matrix[4], 2));
 		}
 
 		return this._sy;
