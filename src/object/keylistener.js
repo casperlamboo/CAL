@@ -1,6 +1,6 @@
 export default class KeyListener {
 	
-	constructor ({actions = {}, active = true}) {
+	constructor (actions = {}, active = true) {
 		this.visible = false;
 		this.active = active;
 		this.depth = -10000;
