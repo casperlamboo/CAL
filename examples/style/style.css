@@ -1,0 +1,12 @@
+canvas {
+	border: 1px solid black;
+}
+
+h2, p {
+	font-family: helvetica, arial;
+}
+
+.content {
+	width: 720px;
+	margin: 0 auto;
+}

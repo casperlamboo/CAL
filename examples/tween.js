@@ -30,7 +30,7 @@ class EasingsObject {
 		let options = {
 			easing: CAL.Utils.Easings[this.easing], 
 			clearCanvas: true, 
-			drawCanvas: true			
+			drawCanvas: true
 		};
 
 		this.tween = new CAL.Tween(targetObject, targetProperties, duration, options);
@@ -48,7 +48,6 @@ for (var i in CAL.Utils.Easings) {
 	group.add(new EasingsObject(y, i));
 	y += 45;
 }
-
 
 (function loop () {
 	requestAnimFrame(loop);
