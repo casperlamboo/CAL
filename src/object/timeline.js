@@ -1,5 +1,4 @@
 export default class TimeLine {
-
 	constructor ({autoRemove = true, loop = false}) {		
 		this.visible = false;
 		this.active = true;
@@ -21,8 +20,8 @@ export default class TimeLine {
 	}
 	
 	removeMoment (remove) {
-		for (var i = 0; i < this.moments.length; i ++) {
-			var moment = this.moments[i];
+		for (let i = 0; i < this.moments.length; i ++) {
+			let moment = this.moments[i];
 
 			if (moment === remove || moment.time === remove || moment.callback === remove) {
 				this.moments.remove(moment);
@@ -59,11 +58,11 @@ export default class TimeLine {
 	}
 	
 	step (dt) {
-		var newTime = this.t + dt;
-		var remove = true;
+		let newTime = this.t + dt;
+		let remove = true;
 
-		for (var i = 0; i < this.moments.length; i ++) {
-			var moment = this.moments[i];
+		for (let i = 0; i < this.moments.length; i ++) {
+			let moment = this.moments[i];
 			if (moment.time >= this.t) {
 				if (moment.time < newTime) {
 					moment.callback();
@@ -83,5 +82,4 @@ export default class TimeLine {
 
 		this.t = newTime;
 	}
-
 };

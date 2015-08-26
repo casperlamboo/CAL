@@ -1,7 +1,6 @@
 import {MathExtended} from '../core/utils.js';
 
 export default class Matrix {
-
 	constructor (options) {
 		if (options === undefined) {
 			this.identity();
@@ -116,8 +115,8 @@ export default class Matrix {
 
 	get matrix () {
 		if (this._matrix === undefined) {
-			var sin = Math.sin(this._rotation);
-			var cos = Math.cos(this._rotation)
+			let sin = Math.sin(this._rotation);
+			let cos = Math.cos(this._rotation)
 
 			this._matrix = [
 				this._sx * cos, this._sx * -sin, this._x,
@@ -154,8 +153,8 @@ export default class Matrix {
 	}
 
 	multiplyMatrix (m) {
-		var a = this.matrix;
-		var b = m.matrix;
+		let a = this.matrix;
+		let b = m.matrix;
 
 		return new Matrix([
 			a[0]*b[0] + a[3]*b[1], a[1]*b[0] + a[4]*b[1], a[2]*b[0] + a[5]*b[1] + b[2],
@@ -164,13 +163,13 @@ export default class Matrix {
 	}
 
 	determinant () {
-		var m = this.matrix;
+		let m = this.matrix;
 		return 1 / (m[0]*m[4] - m[1]*m[3]);
 	}
 
 	inverseMatrix () {
-		var m = this.matrix;
-		var det = this.determinant();
+		let m = this.matrix;
+		let det = this.determinant();
 
 		return new Matrix([
 			 det * m[4], -det * m[1],  det * (m[1]*m[5] - m[2]*m[4]),
@@ -197,7 +196,7 @@ export default class Matrix {
 	}
 
 	setMatrixContext (context) {
-		var m = this.matrix;
+		let m = this.matrix;
 		context.transform(m[0], m[3], m[1], m[4], m[2], m[5]);
 	}
 
@@ -209,13 +208,13 @@ export default class Matrix {
 
 	rotateAroundRelative (angle, center) {
 		if (angle !== 0) {
-			var before = center.applyMatrix(this);
+			let before = center.applyMatrix(this);
 
 			this.rotation = angle;
 
-			var after = center.applyMatrix(this);
+			let after = center.applyMatrix(this);
 
-			var offset = before.subtract(after);
+			let offset = before.subtract(after);
 
 			this.x += offset.x;
 			this.y += offset.y;
@@ -231,14 +230,14 @@ export default class Matrix {
 	}
 
 	scaleAroundRelative (sx, sy, center) {
-		var before = center.applyMatrix(this);
+		let before = center.applyMatrix(this);
 
 		this.sx = sx;
 		this.sy = sy;
 
-		var after = center.applyMatrix(this);
+		let after = center.applyMatrix(this);
 
-		var offset = before.subtract(after);
+		let offset = before.subtract(after);
 		
 		this.x += offset.x;
 		this.y += offset.y;

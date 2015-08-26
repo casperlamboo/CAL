@@ -38,7 +38,7 @@ export let MathExtended = {
 };
 
 export let Easings = {
-	bounceEaseOut: function (dt, b, c, d) {
+	bounceEaseOut: (dt, b, c, d) => {
 		if ((dt /= d) < (1 / 2.75)) {
 			return c * (7.5625 * dt * dt) + b;
 		}
@@ -52,31 +52,31 @@ export let Easings = {
 			return c * (7.5625 * (dt -= (2.625 / 2.75)) * dt + 0.984375) + b;
 		}
 	},
-	easeIn: function (dt, b, c, d) {
+	easeIn: (dt, b, c, d) => {
 		return c * (dt /= d) * dt + b;
 	},
-	easeOut: function (dt, b, c, d) {
+	easeOut: (dt, b, c, d) => {
 		return -c * (dt /= d) * (dt - 2) + b;
 	},
-	easeInOut: function (dt, b, c, d) {
+	easeInOut: (dt, b, c, d) => {
 		if ((dt /= d / 2) < 1) {
 			return c / 2 * dt * dt + b;
 		}
 		return -c / 2 * ((--dt) * (dt - 2) - 1) + b;
 	},
-	strongEaseIn: function (dt, b, c, d) {
+	strongEaseIn: (dt, b, c, d) => {
 		return c * (dt /= d) * dt * dt * dt * dt + b;
 	},
-	strongEaseOut: function (dt, b, c, d) {
+	strongEaseOut: (dt, b, c, d) => {
 		return c * (( dt = dt / d - 1) * dt * dt * dt * dt + 1) + b;
 	},
-	strongEaseInOut: function (dt, b, c, d) {
+	strongEaseInOut: (dt, b, c, d) => {
 		if ((dt /= d / 2) < 1) {
 			return c / 2 * dt * dt * dt * dt * dt + b;
 		}
 		return c / 2 * ((dt -= 2) * dt * dt * dt * dt + 2) + b;
 	},
-	linear: function (dt, b, c, d) {
+	linear: (dt, b, c, d) => {
 		return c * dt / d + b;
 	}
 };

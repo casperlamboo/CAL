@@ -2,10 +2,25 @@ import Matrix from '../math/matrix.js';
 import Color from '../math/color';
 
 export default class Text extends Matrix {
-
 	constructor (options = {}) {
-		let {visible = true, active = true, depth = 0, text = '', style = 'normal', variant = 'normal', weight = 'normal', size = 12, font = 'Arial', align = 'left', baseline = 'bottom', textAlign = 'left', color = new Color(), alpha = 'number'} = options;
 		super(options);
+
+		let {
+			visible = true, 
+			active = true, 
+			depth = 0, 
+			text = '', 
+			style = 'normal', 
+			variant = 'normal', 
+			weight = 'normal', 
+			size = 12, 
+			font = 'Arial', 
+			align = 'left', 
+			baseline = 'bottom', 
+			textAlign = 'left', 
+			color = new Color(), 
+			alpha = 'number'
+		} = options;
 
 		this.visible = visible;
 		this.active = active;
@@ -26,13 +41,13 @@ export default class Text extends Matrix {
 	}
 
 	measure (text = this.text) {
-		context.font = [this.style, this.variant, this.weight, this.size + "px", this.font].join(" ");
+		context.font = `${this.style} ${this.variant} ${this.weight} ${this.size}px ${this.font}`;
 
 		return context.measureText(text).width;
 	}
 
 	drawText (context, text, x, y) {
-		context.font = [this.style, this.variant, this.weight, this.size + "px", this.font].join(" ");
+		context.font = `${this.style} ${this.variant} ${this.weight} ${this.size}px ${this.font}`;
 
 		context.textAlign = this.align;
 		context.textBaseline = this.baseline;
@@ -63,13 +78,12 @@ export default class Text extends Matrix {
 
 	clone () {
 		return new Text({
-			style : this.style,
-			variant : this.variant,
-			weight : this.weight,
-			size : this.size,
-			font : this.font,
-			color : this.color.clone()
+			style, 
+			variant, 
+			weight, 
+			size, 
+			font, 
+			color: this.color.clone()
 		});
 	}
-
 };

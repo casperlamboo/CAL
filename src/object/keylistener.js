@@ -1,5 +1,4 @@
 export default class KeyListener {
-	
 	constructor (actions = {}, active = true) {
 		this.visible = false;
 		this.active = active;
@@ -19,5 +18,4 @@ export default class KeyListener {
 			this.actions[key]();
 		}
 	}
-	
 };

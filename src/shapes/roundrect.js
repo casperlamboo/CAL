@@ -1,7 +1,4 @@
-"use strict";
-
 CAL.RoundRect = class extends CAL.Shape {
-
 	constructor (radius, width, height, options) {
 		super(options);
 

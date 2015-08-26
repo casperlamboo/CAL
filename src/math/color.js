@@ -1,5 +1,4 @@
 export default class Color {
-
 	constructor (...args) {
 		if (args.length !== 0) {
 			this.setColor(...args);
@@ -18,7 +17,7 @@ export default class Color {
 			this.a = (typeof arguments[3] === 'number') ? arguments[3] : 1;
 		}
 		else if (typeof arguments[0] === 'number') {
-			var hex = Math.floor(arguments[0]);
+			let hex = Math.floor(arguments[0]);
 
 			this.r = hex >> 16 & 255;
 			this.g = hex >> 8 & 255;
@@ -45,5 +44,4 @@ export default class Color {
 
 		return this;
 	}
-
 };

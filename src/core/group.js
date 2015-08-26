@@ -3,10 +3,14 @@ import Vector from '../math/vector.js';
 import Matrix from '../math/matrix.js';
 
 export default class Group extends Surface {
-
 	constructor (options = {}) {
-		let {useCanvas = true, autoClearCanvas = false, autoDrawCanvas = false} = options;
 		super(options);
+
+		let {
+			useCanvas = true, 
+			autoClearCanvas = false, 
+			autoDrawCanvas = false
+		} = options;
 
 		this.active = true;
 		this.visible = true;
@@ -19,7 +23,6 @@ export default class Group extends Surface {
 		this.autoClearCanvas = autoClearCanvas;
 		this.autoDrawCanvas = autoDrawCanvas;
 
-		this.loop = false;
 		this.itemsToAdd = [];
 		this.itemsToRemove = [];
 
@@ -230,109 +233,78 @@ export default class Group extends Surface {
 	}
 
 	add (...objects) {
-		if (this.loop) {
-			for (var i = 0; i < objects.length; i ++) {
-				var object = objects[i];
-				this.itemsToAdd.push(object);
-			}
-		}
-		else {
-			for (var i = 0; i < objects.length; i ++) {
-				var object = objects[i];
-				if (this.objects.indexOf(object) === -1) {
-					object.parent = this;
-					this.objects.push(object);
-					if (object.init) {
-						object.init(this);
-					}
+		for (let i = 0; i < objects.length; i ++) {
+			let object = objects[i];
+			if (this.objects.indexOf(object) === -1) {
+				object.parent = this;
+				this.objects.push(object);
+				if (object.init) {
+					object.init(this);
 				}
 			}
-			this.sort();
 		}
+		this.sort();
 
 		return this;
 	}
 
 	remove (...objects) {
-		if (this.loop) {
-			for (var i = 0; i < objects.length; i ++) {
-				var object = objects[i];
-				this.itemsToRemove.push(object);
+		for (let i = 0; i < objects.length; i ++) {
+			let object = objects[i];
+
+			let index = this.objects.indexOf(object);
+			if (index === -1) {
+				continue;
+			}
+
+			this.objects.splice(index, 1);
+
+			object.parent = false;
+			if (object.active && object.remove !== undefined) {
+				object.remove(this);
 			}
 		}
-		else {
-			for (var i = 0; i < objects.length; i ++) {
-				var object = objects[i];
 
-				var index = this.objects.indexOf(object);
-				if (index === -1) {
-					continue;
-				}
-
-				this.objects.splice(index, 1);
-
-				object.parent = false;
-				if (object.active && object.remove !== undefined) {
-					object.remove(this);
-				}
-			}
-		}
-	}
-
-	handleAdded () {
-		for (var i = 0; i < this.itemsToAdd.length; i ++) {
-			var object = this.itemsToAdd[i];
-			this.add(object);
-		}
-
-		for (var i = 0; i < this.itemsToRemove.length; i ++) {
-			var object = this.itemsToRemove[i];
-			this.remove(object);
-		}
-
-		this.itemsToRemove = [];
-		this.itemsToAdd = [];
+		return this;
 	}
 
 	sort () {
-		this.objects.sort(({depth:a = 0}, {depth:b = 0}) => {
+		this.objects.sort(({depth: a = 0}, {depth: b = 0}) => {
 			return a - b;
 		});
 	}
 
 	keyDown (keyCode) {
-		this.loop = true;
-		for (var i = this.objects.length-1; i >= 0; i --) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
 			if (object.active && object.keyDown !== undefined) {
 				if (object.keyDown(keyCode, this)) {
 					break;
 				}
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 	}
 
 	keyUp (keyCode) {
-		this.loop = true;
-		for (var i = this.objects.length-1; i >= 0; i --) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
 			if (object.active && object.keyUp !== undefined) {
 				if (object.keyUp(keyCode, this)) {
 					break;
 				}
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 	}
 
 	mouseDown (mouse) {
-		var position = mouse.position.applyMatrix(this.inverseMatrix());
-		var start = mouse.start.applyMatrix(this.inverseMatrix());
+		let position = mouse.position.applyMatrix(this.inverseMatrix());
+		let start = mouse.start.applyMatrix(this.inverseMatrix());
 
-		var mouse = {
+		mouse = {
 			position: position, 
 			start: start, 
 			delta: position.subtract(start), 
@@ -340,24 +312,23 @@ export default class Group extends Surface {
 			down: mouse.down
 		}
 
-		this.loop = true;
-		for (var i = this.objects.length - 1; i >= 0; i --) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseDown !== undefined) {
 				if (object.mouseDown(mouse, this)) {
 					break;
 				}
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 	}
 
 	mouseUp (mouse) {
-		var position = mouse.position.applyMatrix(this.inverseMatrix());
-		var start = mouse.start.applyMatrix(this.inverseMatrix());
+		let position = mouse.position.applyMatrix(this.inverseMatrix());
+		let start = mouse.start.applyMatrix(this.inverseMatrix());
 
-		var mouse = {
+		mouse = {
 			position: position, 
 			start: start, 
 			delta: position.subtract(start), 
@@ -365,24 +336,23 @@ export default class Group extends Surface {
 			down: mouse.down
 		}
 
-		this.loop = true;
-		for (var i = this.objects.length-1; i >= 0; i --) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseUp !== undefined) {
 				if (object.mouseUp(mouse, this)) {
 					break;
 				}
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 	}
 
 	mouseMove (mouse) {
-		var position = mouse.position.applyMatrix(this.inverseMatrix());
-		var start = mouse.start.applyMatrix(this.inverseMatrix());
+		let position = mouse.position.applyMatrix(this.inverseMatrix());
+		let start = mouse.start.applyMatrix(this.inverseMatrix());
 
-		var mouse = {
+		mouse = {
 			position: position, 
 			start: start, 
 			delta: position.subtract(start), 
@@ -390,23 +360,23 @@ export default class Group extends Surface {
 			down: mouse.down
 		}
 
-		this.loop = true;
-		for (var i = this.objects.length-1; i >= 0; i --) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseMove !== undefined) {
 				if (object.mouseMove(mouse, this)) {
 					break;
 				}
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 	}
 
 	step (deltaTime) {
-		this.loop = true;
-		for (var i = 0; i < this.objects.length; i ++) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = 0; i < objects.length; i ++) {
+			let object = objects[i];
 			if (object.active && object.step !== undefined) {
 				if (object instanceof Group && !object.useCanvas) {
 					if (object.clearCanvas || object.autoClearCanvas) {
@@ -420,8 +390,6 @@ export default class Group extends Surface {
 				object.step(deltaTime, this);
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 
 		if (this.useCanvas) {
 			if (this.clearCanvas || this.autoClearCanvas) {
@@ -437,8 +405,8 @@ export default class Group extends Surface {
 
 	cycle () {
 		if (this.focus) {
-			var currentTime = new Date().getTime();
-			var deltaTime = currentTime - this.lastTime;
+			let currentTime = new Date().getTime();
+			let deltaTime = currentTime - this.lastTime;
 			this.lastTime = currentTime;
 
 			this.step(deltaTime);
@@ -451,9 +419,10 @@ export default class Group extends Surface {
 			matrix = this;
 		}
 
-		this.loop = true;
-		for (var i = 0; i < this.objects.length; i ++) {
-			var object = this.objects[i];
+		let objects = Array.from(this.objects);
+
+		for (let i = 0; i < objects.length; i ++) {
+			let object = objects[i];
 			if (/*object.useCanvas !== true && */object.visible && object.draw !== undefined) {
 				if (object.useCanvas !== true && object instanceof Matrix) {
 					object.draw(context, object.multiplyMatrix(matrix));
@@ -463,8 +432,5 @@ export default class Group extends Surface {
 				}
 			}
 		}
-		this.loop = false;
-		this.handleAdded();
 	}
-
 };

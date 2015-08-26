@@ -1,9 +1,13 @@
 import {Easings} from '../core/utils.js';
 
 export default class Tween {
-
 	constructor (object, attributes, duration, options = {}) {
-		let {easing = Easings.linear, callback, drawCanvas = true, clearCanvas = false} = options;
+		let {
+			easing = Easings.linear, 
+			callback, 
+			drawCanvas = true, 
+			clearCanvas = false
+		} = options;
 
 		this.visible = false;
 		this.active = true;
@@ -17,12 +21,12 @@ export default class Tween {
 		this.callback = callback;
 
 		this.begin = {};
-		for (var i in attributes) {
+		for (let i in attributes) {
 			this.begin[i] = this.object[i];
 		}
 
 		this.change = {};
-		for (var i in attributes) {
+		for (let i in attributes) {
 			this.change[i] = attributes[i] - this.begin[i];
 		}
 
@@ -60,17 +64,17 @@ export default class Tween {
 		this.timer += deltaTime;
 
 		if (this.timer < this.duration) {
-			for (var i in this.attributes) {
-				var dt = this.timer;
-				var d = this.duration;
-				var b = this.begin[i];
-				var c = this.change[i];
+			for (let i in this.attributes) {
+				let dt = this.timer;
+				let d = this.duration;
+				let b = this.begin[i];
+				let c = this.change[i];
 				
 				this.object[i] = this.easing(dt, b, c, d);
 			}
 		}
 		else {
-			for (var i in this.attributes) {
+			for (let i in this.attributes) {
 				this.object[i] = this.attributes[i];
 			}
 
@@ -87,5 +91,4 @@ export default class Tween {
 			group.drawCanvas = true;
 		}
 	}
-
 };

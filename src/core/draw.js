@@ -1,10 +1,14 @@
 import Matrix from '../math/matrix.js';
 
 export default class Draw extends Matrix {
-
 	constructor (centerX = 0, centerY = 0, numberWidth = 1, numberHeight = 1, options = {}) {
-		let {visible = true, depth = 0, alpha = 1} = options;
 		super(options);
+
+		let {
+			visible = true, 
+			depth = 0, 
+			alpha = 1
+		} = options;
 
 		this.visible = visible;
 		this.active = false;
@@ -76,11 +80,11 @@ export default class Draw extends Matrix {
 	}
 
 	drawScale (context, index, x, y, width, height) {
-		var sx = (index % this.length) * this.width;
-		var sy = Math.floor(index / this.length) * this.height;
+		let sx = (index % this.length) * this.width;
+		let sy = Math.floor(index / this.length) * this.height;
 
-		var offsetX = x - this.centerX;
-		var offsetY = y - this.centerY;
+		let offsetX = x - this.centerX;
+		let offsetY = y - this.centerY;
 
 		context.drawImage(this.image, sx, sy, this.width, this.height, offsetX, offsetY, width, height);
 
@@ -101,5 +105,4 @@ export default class Draw extends Matrix {
 
 		return this;
 	}
-
 };

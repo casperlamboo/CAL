@@ -1,7 +1,6 @@
 "use strict";
 
 CAL.Circle = class extends CAL.Shape {
-
 	constructor (radius, options) {
 		super(options);
 
@@ -12,7 +11,7 @@ CAL.Circle = class extends CAL.Shape {
 		this.points = [];
 
 		this.radius = (typeof radius === "number") ? radius : 100;
-		var offset = 4 * (Math.sqrt(2) - 1) / 3 * radius;
+		let offset = 4 * (Math.sqrt(2) - 1) / 3 * radius;
 
 		this.addPoint(
 			new CAL.BezierPoint(new CAL.Vector(0, radius), new CAL.Vector(-offset, radius), new CAL.Vector(offset, radius)), 
@@ -34,5 +33,4 @@ CAL.Circle = class extends CAL.Shape {
 			matrix: this.matrix
 		});
 	}
-
 };

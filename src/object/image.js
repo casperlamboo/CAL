@@ -1,7 +1,6 @@
 import Draw from '../core/draw.js';
 
 export default class Img extends Draw {
-
 	constructor (source, centerX, centerY, numberWidth, numberHeight, options = {}) {
 		super(centerX, centerY, numberWidth, numberHeight, options);
 
@@ -24,5 +23,4 @@ export default class Img extends Draw {
 
 		return this;
 	}
-
 };

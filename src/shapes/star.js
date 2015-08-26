@@ -2,7 +2,6 @@ import Shape from '../object/shape.js';
 import Vector from '../math/vector.js';
 
 export default class Star extends Shape {
-
 	constructor (rays, outerRadius, innerRadius, options) {
 		super(options);
 
@@ -18,12 +17,12 @@ export default class Star extends Shape {
 
 		this.points = [];
 
-		var even = false;
-		for (var rad = 0; rad < Math.PI*2; rad += Math.PI / this.rays) {
-			var radius = even ? this.outerRadius : this.innerRadius;
+		let even = false;
+		for (let rad = 0; rad < Math.PI*2; rad += Math.PI / this.rays) {
+			let radius = even ? this.outerRadius : this.innerRadius;
 
-			var x = Math.sin(rad) * radius;
-			var y = Math.cos(rad) * radius;
+			let x = Math.sin(rad) * radius;
+			let y = Math.cos(rad) * radius;
 
 			this.addPoint(new Vector(x, y));
 
@@ -43,5 +42,4 @@ export default class Star extends Shape {
 			matrix: this.matrix
 		});
 	}
-
 };

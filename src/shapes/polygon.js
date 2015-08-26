@@ -1,7 +1,6 @@
 import Shape from '../object/shape.js';
 
 export default class Polygon extends Shape {
-
 	constructor (angles, radius, options) {
 		super(options);
 
@@ -14,9 +13,9 @@ export default class Polygon extends Shape {
 		this.angles = angles;
 		this.radius = radius;
 
-		for (var rad = 0; rad < Math.PI*2; rad += Math.PI*2 / this.angles) {
-			var x = Math.cos(rad) * this.radius;
-			var y = Math.sin(rad) * this.radius;
+		for (let rad = 0; rad < Math.PI*2; rad += Math.PI*2 / this.angles) {
+			let x = Math.cos(rad) * this.radius;
+			let y = Math.sin(rad) * this.radius;
 
 			this.addPoint(new CAL.Vector(x, y));
 		}
@@ -34,5 +33,4 @@ export default class Polygon extends Shape {
 			matrix: this.matrix
 		});
 	}
-
 };
