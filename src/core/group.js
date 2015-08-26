@@ -23,9 +23,6 @@ export default class Group extends Surface {
 		this.autoClearCanvas = autoClearCanvas;
 		this.autoDrawCanvas = autoDrawCanvas;
 
-		this.itemsToAdd = [];
-		this.itemsToRemove = [];
-
 		this.mouse = {
 			position: new Vector(), 
 			start: new Vector(), 
@@ -423,6 +420,7 @@ export default class Group extends Surface {
 
 		for (let i = 0; i < objects.length; i ++) {
 			let object = objects[i];
+
 			if (/*object.useCanvas !== true && */object.visible && object.draw !== undefined) {
 				if (object.useCanvas !== true && object instanceof Matrix) {
 					object.draw(context, object.multiplyMatrix(matrix));

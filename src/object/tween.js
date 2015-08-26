@@ -1,11 +1,11 @@
 import {Easings} from '../core/utils.js';
 
 export default class Tween {
-	constructor (object, attributes, duration, options = {}) {
+	constructor (targetObject, targetProperties, duration, options = {}) {
 		let {
 			easing = Easings.linear, 
 			callback, 
-			drawCanvas = true, 
+			drawCanvas = false, 
 			clearCanvas = false
 		} = options;
 
@@ -13,21 +13,21 @@ export default class Tween {
 		this.active = true;
 		this.depth = -10000;
 
-		this.object = object;
-		this.attributes = attributes;
+		this.targetObject = targetObject;
+		this.targetProperties = targetProperties;
 		this.timer = 0;
 		this.duration = duration;
-		this.easing = easings;
+		this.easing = easing;
 		this.callback = callback;
 
 		this.begin = {};
-		for (let i in attributes) {
-			this.begin[i] = this.object[i];
+		for (let i in targetProperties) {
+			this.begin[i] = this.targetObject[i];
 		}
 
 		this.change = {};
-		for (let i in attributes) {
-			this.change[i] = attributes[i] - this.begin[i];
+		for (let i in targetProperties) {
+			this.change[i] = targetProperties[i] - this.begin[i];
 		}
 
 		this.drawCanvas = drawCanvas;
@@ -64,18 +64,18 @@ export default class Tween {
 		this.timer += deltaTime;
 
 		if (this.timer < this.duration) {
-			for (let i in this.attributes) {
+			for (let i in this.targetProperties) {
 				let dt = this.timer;
 				let d = this.duration;
 				let b = this.begin[i];
 				let c = this.change[i];
 				
-				this.object[i] = this.easing(dt, b, c, d);
+				this.targetObject[i] = this.easing(dt, b, c, d);
 			}
 		}
 		else {
-			for (let i in this.attributes) {
-				this.object[i] = this.attributes[i];
+			for (let i in this.targetProperties) {
+				this.targetObject[i] = this.targetProperties[i];
 			}
 
 			if (this.callback !== undefined) {
