@@ -5,13 +5,13 @@ import Color from '../math/color.js';
 
 export default class CollsionMap extends Matrix {
 	
-	createFromShape (shape, margin = 0) {
-		let boundingBox = shape.getBoundingBox(false);
+	createFromShape (shape, {margin = 0, applyMatrix = false}) {
+		let boundingBox = shape.getBoundingBox(applyMatrix);
 
 		let lineWidth = Math.ceil((shape.lineWidth + margin)/2);
 
-		this.width = boundingBox.width + lineWidth*2;
-		this.height = boundingBox.height + lineWidth*2;
+		this.width = Math.ceil(boundingBox.width) + lineWidth*2;
+		this.height = Math.ceil(boundingBox.height) + lineWidth*2;
 
 		this.x = -boundingBox.left + lineWidth;
 		this.y = -boundingBox.top + lineWidth;
@@ -27,9 +27,10 @@ export default class CollsionMap extends Matrix {
 			lineColor: new Color(), 
 			shapeColor: (shape.shapeColor ? new Color() : false), 
 			closePath: (shape.shapeColor || shape.closePath)
-		})
+		});
 
-		collisionShape.draw(surface.context, new Matrix({x: this.x, y: this.y}));
+		let matrix = applyMatrix ? shape.multiplyMatrix(this) : this;
+		collisionShape.draw(surface.context, matrix);
 
 		let imageData = surface.getImageData();
 

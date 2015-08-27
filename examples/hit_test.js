@@ -27,7 +27,7 @@ group.add(shape);
 group.clearCanvas = true;
 group.drawCanvas = true;
 
-let collisionMap = new CAL.CollisionMap().createFromShape(shape, 10);
+let collisionMap = new CAL.CollisionMap().createFromShape(shape, {margin: 10, applyMatrix: true});
 
 class HitDetection {
 	constructor () {
@@ -36,7 +36,7 @@ class HitDetection {
 	}
 
 	mouseMove (mouse) {
-		shape.lineColor.setColor(collisionMap.hit(mouse.position, shape) ? 0xff0000 : 0x000000);
+		shape.lineColor.setColor(collisionMap.hit(mouse.position) ? 0xff0000 : 0x000000);
 
 		group.clearCanvas = true;
 		group.drawCanvas = true;
@@ -47,7 +47,7 @@ class HitDetection {
 			for (let y = 0; y < group.image.height; y ++) {
 				let position = new CAL.Vector(x, y);
 
-				group.context.fillStyle = collisionMap.hit(position, shape) ? 'rgba(0,255,0,0.4)' : 'rgba(255,0,0,0.4)';
+				group.context.fillStyle = collisionMap.hit(position) ? 'rgba(0,255,0,0.4)' : 'rgba(255,0,0,0.4)';
 
 				group.context.fillRect(x, y, 1, 1);
 			}
