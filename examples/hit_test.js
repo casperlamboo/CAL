@@ -42,17 +42,17 @@ class HitDetection {
 		group.drawCanvas = true;
 	}
 
-	keyDown (mouse) {
-		for (let x = 0; x < group.image.width; x ++) {
-			for (let y = 0; y < group.image.height; y ++) {
-				let position = new CAL.Vector(x, y);
+	// keyDown (mouse) {
+	// 	for (let x = 0; x < group.image.width; x ++) {
+	// 		for (let y = 0; y < group.image.height; y ++) {
+	// 			let position = new CAL.Vector(x, y);
 
-				group.context.fillStyle = collisionMap.hit(position) ? 'rgba(0,255,0,0.4)' : 'rgba(255,0,0,0.4)';
+	// 			group.context.fillStyle = collisionMap.hit(position) ? 'rgba(0,255,0,0.4)' : 'rgba(255,0,0,0.4)';
 
-				group.context.fillRect(x, y, 1, 1);
-			}
-		}
-	}
+	// 			group.context.fillRect(x, y, 1, 1);
+	// 		}
+	// 	}
+	// }
 }
 
 group.add(new HitDetection());

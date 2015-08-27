@@ -5,7 +5,7 @@ import Color from '../math/color.js';
 
 export default class CollsionMap extends Matrix {
 	
-	createFromShape (shape, {margin = 0, applyMatrix = false}) {
+	createFromShape (shape, {margin = 0, applyMatrix = false, fill}) {
 		let boundingBox = shape.getBoundingBox(applyMatrix);
 
 		let lineWidth = Math.ceil((shape.lineWidth + margin)/2);
@@ -25,7 +25,7 @@ export default class CollsionMap extends Matrix {
 			points: shape.points, 
 			lineWidth: lineWidth * 2, 
 			lineColor: new Color(), 
-			shapeColor: (shape.shapeColor ? new Color() : false), 
+			shapeColor: ((shape.shapeColor || fill) ? new Color() : false), 
 			closePath: (shape.shapeColor || shape.closePath)
 		});
 
@@ -52,7 +52,7 @@ export default class CollsionMap extends Matrix {
 		matrix = matrix ? matrix.inverseMatrix().multiplyMatrix(this) : this;
 		vector = vector.applyMatrix(matrix).round();
 
-		if (vector.x <= 0 || vector.y <= 0 || vector.x >= this.width || vector.y >= this.height) {
+		if (vector.x < 0 || vector.y < 0 || vector.x >= this.width || vector.y >= this.height) {
 			return false;
 		}
 
@@ -60,4 +60,6 @@ export default class CollsionMap extends Matrix {
 
 		return this.map[index];
 	}
+
+	mouse
 }

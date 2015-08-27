@@ -134,6 +134,10 @@ export default class Shape extends Matrix {
 		};
 	}
 
+	isSelfIntersecting () {
+		
+	}
+
 	getNormal (i) {
 		let pointA = this.points[((i+1) % this.points.length)];
 		let pointB = this.points[i];
