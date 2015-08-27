@@ -5,12 +5,15 @@
 //Global Composite Operation
 //Linear Gradient
 //Radial Gradient
+
+import Vector from '../math/vector.js';
+
 export let MathExtended = {
 	clamb: function (value, min, max) {
 		return (value > min) ? ((value < max) ? value : max) : min;
 	},
 	randomInt: function (min, max) {
-		return Math.floor(CAL.Math.random(min, max + 1));
+		return Math.floor(MathExtended.random(min, max + 1));
 	},
 	random: function (min = 0, max = 1) {
 		return Math.random() * (max - min) + min;
@@ -20,7 +23,7 @@ export let MathExtended = {
 	},
 	lineCollision: function (v1, v2, v3, v4) {
 		//bron: http://mathworld.wolfram.com/Line-LineIntersection.html
-		var intersection = new CAL.Vector(
+		var intersection = new Vector(
 			((v1.x*v2.y-v1.y*v2.x)*(v3.x-v4.x)-(v1.x-v2.x)*(v3.x*v4.y-v3.y*v4.x)) / ((v1.x-v2.x)*(v3.y-v4.y)-(v1.y-v2.y)*(v3.x-v4.x)),
 			((v1.x*v2.y-v1.y*v2.x)*(v3.y-v4.y)-(v1.y-v2.y)*(v3.x*v4.y-v3.y*v4.x)) / ((v1.x-v2.x)*(v3.y-v4.y)-(v1.y-v2.y)*(v3.x-v4.x))
 		);

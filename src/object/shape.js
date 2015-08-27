@@ -1,6 +1,7 @@
 import Matrix from '../math/matrix.js';
 import Color from '../math/color.js';
 import Vector from '../math/vector.js';
+import {MathExtended} from '../core/utils.js';
 
 export default class Shape extends Matrix {
 	constructor (options = {}) {
@@ -135,7 +136,73 @@ export default class Shape extends Matrix {
 	}
 
 	isSelfIntersecting () {
-		
+		let intersections = [];
+
+		for (var i = 0; i < this.points.length - 1; i ++) {
+			let lineA = {
+				pointA: this.points[i], 
+				pointB: this.points[i + 1]
+			};
+
+			for (var j = i + 3; j < this.points.length - 1; j ++) {
+				let lineB = {
+					pointA: this.points[j], 
+					pointB: this.points[j + 1]
+				}
+
+				let intersection = MathExtended.lineCollision(lineA.pointA, lineA.pointB, lineB.pointA, lineB.pointB);
+
+				if (intersection) {
+					intersections.push(intersection);
+				}
+			}
+		}
+
+		return intersections;
+	}
+
+	removeSelfIntersecting () {
+		let shapes = [];
+		let pointCollections = [this.points];
+
+
+		for (let i = 0; i < pointCollections.length; i ++) {
+			let points = pointCollections[i];
+
+			for (let j = 0; j < points.length - 1; j ++) {
+				let lineA = {
+					pointA: points[j], 
+					pointB: points[j + 1]
+				};
+
+				for (let k = j + 3; k < points.length - 1; k ++) {
+					let lineB = {
+						pointA: points[k], 
+						pointB: points[k + 1]
+					}
+
+					let intersection = MathExtended.lineCollision(lineA.pointA, lineA.pointB, lineB.pointA, lineB.pointB);
+
+					if (intersection) {
+						let shape = new Shape({
+							points: [intersection, ...points.splice(j+1, k-j, intersection.clone())], 
+							closePath: true, 
+							lineWidth: this.lineWidth, 
+							lineCap: this.lineCap, 
+							lineColor: this.lineColor, 
+							shapeColor: this.shapeColor, 
+							lineJoin: this.lineJoin
+						});
+
+						shapes.push(shape);
+
+						pointCollections.push(shape.points);
+					}
+				}
+			}
+		}
+
+		return shapes;
 	}
 
 	getNormal (i) {
