@@ -135,7 +135,7 @@ export default class Shape extends Matrix {
 	}
 
 	getNormal (i) {
-		let pointA = this.points[((i+1)%this.points.length)];
+		let pointA = this.points[((i+1) % this.points.length)];
 		let pointB = this.points[i];
 
 		return pointA.subtract(pointB).normal().normalize();
