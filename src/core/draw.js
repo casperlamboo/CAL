@@ -1,4 +1,5 @@
 import Matrix from '../math/matrix.js';
+import Vector from '../math/vector.js';
 
 export default class Draw extends Matrix {
 	constructor (centerX = 0, centerY = 0, numberWidth = 1, numberHeight = 1, options = {}) {
@@ -25,14 +26,40 @@ export default class Draw extends Matrix {
 		this.length = this.numberWidth * this.numberHeight;
 	}
 
-	getBoundingBox () {
+	getBoundingBox (applyMatrix) {
+		let top = -this.centerY;
+		let left = -this.centerX;
+		let right = this.width - this.centerX;
+		let bottom = this.height - this.centerY;
+
+		let points = [
+			new Vector(left, top), 
+			new Vector(right, top), 
+			new Vector(left, bottom), 
+			new Vector(right, bottom)
+		];
+
+		let minX = Infinity;
+		let minY = Infinity;
+		let maxX = -Infinity;
+		let maxY = -Infinity;
+
+		for (let i = 0; i < points.length; i ++) {
+			let point = applyMatrix ? points[i].applyMatrix(this) : points[i];
+
+			minX = (point.x < minX) ? point.x : minX;
+			minY = (point.y < minY) ? point.y : minY;
+			maxX = (point.x > maxX) ? point.x : maxX;
+			maxY = (point.y > maxY) ? point.y : maxY;
+		}
+
 		return {
-			top: -this.centerX, 
-			left: -this.centerY,
-			right: this.width - this.centerX, 
-			bottom: this.height - this.centerY,
-			width: this.width, 
-			height: this.height
+			top: minY, 
+			left: minX, 
+			bottom: maxY, 
+			right: maxX, 
+			width: maxX - minX, 
+			height: maxY - minY
 		};
 	}
 

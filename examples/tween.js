@@ -1,7 +1,7 @@
 import * as CAL from 'src/index.js';
 
-var group = new CAL.Group({
-	canvas: document.getElementById("CAL")
+let group = new CAL.Group({
+	canvas: document.getElementById('CAL')
 });
 
 class EasingsObject {
@@ -25,7 +25,7 @@ class EasingsObject {
 		let targetObject = this;
 		let targetProperties = {
 			x: mouse.position.x
-		}
+		};
 		let duration = 2000;
 		let options = {
 			easing: CAL.Utils.Easings[this.easing], 
@@ -43,8 +43,8 @@ class EasingsObject {
 	}
 }
 
-var y = 45;
-for (var i in CAL.Utils.Easings) {
+let y = 45;
+for (let i in CAL.Utils.Easings) {
 	group.add(new EasingsObject(y, i));
 	y += 45;
 }

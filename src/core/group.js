@@ -1,6 +1,7 @@
 import Surface from './surface.js';
 import Vector from '../math/vector.js';
 import Matrix from '../math/matrix.js';
+import {KeyLookUp} from './utils.js';
 
 export default class Group extends Surface {
 	constructor (options = {}) {
@@ -166,14 +167,22 @@ export default class Group extends Surface {
 				case 'keydown':
 					if (!this.keysDown[event.keyCode]) {
 						this.keysDown[event.keyCode] = true;
-						this.keyDown(event.keyCode);
+						this.keyDown({
+							key: KeyLookUp[event.keyCode],
+							keyCode: event.keyCode, 
+							keysDown: this.keysDown
+						});
 					}
 					break;
 
 				case 'keyup':
 					this.keysDown[event.keyCode] = false;
 
-					this.keyUp(event.keyCode);
+					this.keyUp({
+						key: KeyLookUp[event.keyCode],
+						keyCode: event.keyCode, 
+						keysDown: this.keysDown
+					});
 					break;
 
 				case 'blur':
@@ -271,26 +280,26 @@ export default class Group extends Surface {
 		});
 	}
 
-	keyDown (keyCode) {
+	keyDown (key) {
 		let objects = Array.from(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.active && object.keyDown !== undefined) {
-				if (object.keyDown(keyCode, this)) {
+				if (object.keyDown(key, this)) {
 					break;
 				}
 			}
 		}
 	}
 
-	keyUp (keyCode) {
+	keyUp (key) {
 		let objects = Array.from(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.active && object.keyUp !== undefined) {
-				if (object.keyUp(keyCode, this)) {
+				if (object.keyUp(key, this)) {
 					break;
 				}
 			}

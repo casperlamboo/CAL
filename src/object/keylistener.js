@@ -10,20 +10,30 @@ export default class KeyListener {
 	}
 
 	add (key, callback) {
+		let keyCode;
 		if (typeof key === 'number') {
-			this.actions[key] = callback;
+			keyCode = key;
 		}
 		else if (typeof key === 'string') {
-			key = KeyLookUp[key];
-			this.actions[key] = callback;
+			keyCode = KeyLookUp.indexOf(key);
 		}
+
+		if (this.actions[keyCode] === undefined) {
+			this.actions[keyCode] = [];
+		}
+
+		this.actions[keyCode].push(callback);
 
 		return this;
 	}
 
-	keyDown (key) {	
-		if (this.actions[key]) {
-			this.actions[key]();
+	keyDown ({keyCode}) {	
+		if (this.actions[keyCode]) {
+			let actions = this.actions[keyCode];
+
+			for (let callback of actions) {
+				callback();
+			}
 		}
 	}
 };

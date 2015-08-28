@@ -4,8 +4,27 @@ import Shape from '../object/shape.js';
 import Color from '../math/color.js';
 
 export default class CollsionMap extends Matrix {
+
+	createFromImage (image, {applyMatrix = false}) {
+		let boundingBox = image.getBoundingBox(applyMatrix);
+
+		this.width = Math.ceil(boundingBox.width);
+		this.height = Math.ceil(boundingBox.height);
+
+		this.x = -boundingBox.left;
+		this.y = -boundingBox.top;
+
+		let surface = new Surface({
+			width: this.width, 
+			height: this.height
+		});
+
+		this.createFromImageData(image, surface, applyMatrix);
+
+		return this;
+	}
 	
-	createFromShape (shape, {margin = 0, applyMatrix = false, fill}) {
+	createFromShape (shape, {margin = 0, applyMatrix = false, fill = false}) {
 		let boundingBox = shape.getBoundingBox(applyMatrix);
 
 		let lineWidth = Math.ceil((shape.lineWidth + margin)/2);
@@ -29,17 +48,17 @@ export default class CollsionMap extends Matrix {
 			closePath: (shape.shapeColor || shape.closePath)
 		});
 
-		let matrix = applyMatrix ? shape.multiplyMatrix(this) : this;
-		collisionShape.draw(surface.context, matrix);
-
-		let imageData = surface.getImageData();
-
-		this.createFromImageData(imageData);
+		this.createFromImageData(collisionShape, surface, applyMatrix);
 
 		return this;		
 	}
 
-	createFromImageData (imageData) {
+	createFromImageData (image, surface, applyMatrix) {
+		let matrix = applyMatrix ? image.multiplyMatrix(this) : this;
+		image.draw(surface.context, matrix);
+
+		let imageData = surface.getImageData();
+
 		this.map = [];
 		for (let dataIndex = 3, mapIndex = 0; dataIndex < imageData.data.length; dataIndex += 4, mapIndex ++) {
 			this.map[mapIndex] = (imageData.data[dataIndex] > 125);
@@ -60,6 +79,4 @@ export default class CollsionMap extends Matrix {
 
 		return this.map[index];
 	}
-
-	mouse
 }
