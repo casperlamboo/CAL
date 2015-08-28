@@ -14,7 +14,7 @@ export default class CollsionMap extends Matrix {
 		this.x = -boundingBox.left;
 		this.y = -boundingBox.top;
 
-		this.createFromImageData(image, applyMatrix);
+		this._applyMap(image, applyMatrix);
 
 		return this;
 	}
@@ -38,12 +38,12 @@ export default class CollsionMap extends Matrix {
 			closePath: (shape.shapeColor || shape.closePath)
 		}).copyMatrix(shape);
 
-		this.createFromImageData(collisionShape, applyMatrix);
+		this._applyMap(collisionShape, applyMatrix);
 
 		return this;		
 	}
 
-	createFromImageData (image, applyMatrix) {
+	_applyMap (image, applyMatrix) {
 		let surface = new Surface({
 			width: this.width, 
 			height: this.height

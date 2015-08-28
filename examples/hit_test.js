@@ -55,15 +55,22 @@ class HitDetection {
 		group.drawCanvas = true;
 	}
 
-	keyDown (mouse) {
-		for (let x = 0; x < group.image.width; x ++) {
-			for (let y = 0; y < group.image.height; y ++) {
-				let position = new CAL.Vector(x, y);
+	keyDown ({key}) {
+		let red = new CAL.Color(255, 0, 0, 0.4);
+		let green = new CAL.Color(0, 255, 0, 0.4);
 
-				let hit = collisionMapShape.hit(position) || collisionMapImage.hit(position);
-				group.context.fillStyle = hit ? 'rgba(0,255,0,0.4)' : 'rgba(255,0,0,0.4)';
+		let context = group.context;
 
-				group.context.fillRect(x, y, 1, 1);
+		if (key === 'space') {
+			for (let x = 0; x < group.image.width; x ++) {
+				for (let y = 0; y < group.image.height; y ++) {
+					let position = new CAL.Vector(x, y);
+
+					let hit = collisionMapShape.hit(position) || collisionMapImage.hit(position);
+					context.fillStyle = hit ? green.setFill(context) : red.setFill(context);
+
+					context.fillRect(x, y, 1, 1);
+				}
 			}
 		}
 	}

@@ -27,6 +27,29 @@ export default class KeyListener {
 		return this;
 	}
 
+	remove (...objects) {
+		for (var key of objects) {
+			if (typeof key === 'number') {
+				delete this.actions[key];
+			}
+			else if (typeof key === 'string') {
+				delete this.actions[KeyLookUp.indexOf(key)];
+			}
+			else if (typeof key === 'function') {
+				for (let i of this.actions) {
+					let action = this.actions[i];
+
+					let index = action.indexOf(key);
+					if (index !== -1) {
+						action.splice(index, 1);
+					}
+				}
+			}
+		}
+
+		return this;
+	}
+
 	keyDown ({keyCode}) {	
 		if (this.actions[keyCode]) {
 			let actions = this.actions[keyCode];

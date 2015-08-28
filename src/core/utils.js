@@ -95,6 +95,7 @@ export let KeyLookUp = {
 	 19: 'break', 
 	 20: 'caps_lock', 
 	 27: 'escape', 
+	 32: 'space', 
 	 33: 'page_up', 
 	 34: 'page_down', 
 	 35: 'end', 
