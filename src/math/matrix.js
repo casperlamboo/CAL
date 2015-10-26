@@ -119,8 +119,8 @@ export default class Matrix {
 			let cos = Math.cos(this._rotation)
 
 			this._matrix = [
-				this._sx * cos, this._sx * -sin, this._x,
-				this._sy * sin, this._sy * cos, this._y
+				this._sx * cos, this._sx * sin, this._x,
+				-this._sy * sin, this._sy * cos, this._y
 			];
 		}
 
