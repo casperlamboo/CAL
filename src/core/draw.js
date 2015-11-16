@@ -76,6 +76,49 @@ export default class Draw extends Matrix {
 		return this;
 	}
 
+	drawCrop (context, index = 0, x = 0, y = 0, maxWidth = this.width, maxHeight = this.height) {
+		var sx = (index % this.numberWidth) * this.width;
+		var sy = Math.floor(index / this.numberWidth) * this.height;
+
+		var offsetX = x - this.centerX;
+		var offsetY = y - this.centerY;
+
+		for (var widthStep = 0; widthStep < maxWidth; widthStep += this.width) {
+			let width = widthStep + this.width <= maxWidth ? this.width : maxWidth % this.width;
+
+			for (var heightStep = 0; heightStep < maxHeight; heightStep += this.height) {
+				let height = heightStep + this.height <= maxHeight ? this.height : maxHeight % this.height;
+
+				context.drawImage(this.image, sx, sy, width, height, offsetX + widthStep, offsetY + heightStep, width, height);
+			}
+		}
+
+		return this;
+	}
+
+	drawCropAngle (context, index = 0, x = 0, y = 0, width = this.width, height = this.height, angle = 0) {
+		context.save();
+		context.translate(x, y);
+		context.rotate(angle);
+		this.drawCrop(context, index, 0, 0, width, height);
+		context.restore();
+
+		return this;
+	}
+
+
+	drawCropAngleScale (context, index = 0, x = 0, y = 0, width = this.width, height = this.height, angle = 0, sx = 1, sy = 1) {
+		context.save();
+		context.translate(x, y);
+		context.scale(sx, sy)
+		context.rotate(angle);
+		this.drawCrop(context, index, 0, 0, width, height);
+		context.restore();
+
+		return this;
+	}
+
+
 	drawSimple (context, index, x, y) {
 		var sx = (index % this.numberWidth) * this.width;
 		var sy = Math.floor(index / this.numberWidth) * this.height;
@@ -99,6 +142,17 @@ export default class Draw extends Matrix {
 	drawAngle (context, index, x, y, angle) {
 		context.save();
 		context.translate(x, y);
+		context.rotate(angle);
+		this.drawSimple(context, index, 0, 0);
+		context.restore();
+
+		return this;
+	}
+
+	drawAngleScale (context, index, x, y, angle, sx, sy) {
+		context.save();
+		context.translate(x, y);
+		context.scale(sx, sy)
 		context.rotate(angle);
 		this.drawSimple(context, index, 0, 0);
 		context.restore();

@@ -22,10 +22,10 @@ export default class CollsionMap extends Matrix {
 	createFromShape (shape, {margin = 0, applyMatrix = false, fill = false}) {
 		let boundingBox = shape.getBoundingBox(applyMatrix);
 
-		let lineWidth = Math.ceil((shape.lineWidth + margin)/2);
+		let lineWidth = Math.ceil((shape.lineWidth + margin) / 2);
 
-		this.width = Math.ceil(boundingBox.width) + lineWidth*2;
-		this.height = Math.ceil(boundingBox.height) + lineWidth*2;
+		this.width = Math.ceil(boundingBox.width) + lineWidth * 2;
+		this.height = Math.ceil(boundingBox.height) + lineWidth * 2;
 
 		this.x = -boundingBox.left + lineWidth;
 		this.y = -boundingBox.top + lineWidth;

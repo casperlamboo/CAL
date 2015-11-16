@@ -1,5 +1,13 @@
 import * as CAL from 'src/index.js';
 
+let canvas = new CAL.Matrix({
+	rotation: -1, 
+	sx: 3, 
+	sy: -0.1, 
+	x: 100, 
+	y: 200
+});
+
 let group = new CAL.Group({
 	canvas: document.getElementById('CAL')
 });
@@ -30,11 +38,11 @@ let shape = new CAL.Shape({
 	lineWidth: 10, 
 	shapeColor: false, 
 	closePath: false, 
-	rotation: 1, 
-	sy: 1.1, 
-	sx: 0.8, 
-	x: 200, 
-	y: 100
+	x: 400, 
+	y: 240, 
+	sx: 0.9, 
+	sy: 0.4, 
+	rotation: 2
 });
 
 group.add(shape);

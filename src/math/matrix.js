@@ -9,6 +9,8 @@ export default class Matrix {
 			this.matrix = options;
 		}
 		else {
+			let {matrix} = options;
+
 			if (options.matrix instanceof Array) {
 				this.matrix = options.matrix;
 			}
