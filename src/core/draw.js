@@ -160,14 +160,14 @@ export default class Draw extends Matrix {
 		return this;
 	}
 
-	drawScale (context, index, x, y, width, height) {
+	drawScale (context, index, x, y, scaleX, scaleY) {
 		let sx = (index % this.length) * this.width;
 		let sy = Math.floor(index / this.length) * this.height;
 
-		let offsetX = x - this.centerX;
-		let offsetY = y - this.centerY;
+		let offsetX = x - this.centerX * scaleX;
+		let offsetY = y - this.centerY * scaleY;
 
-		context.drawImage(this.image, sx, sy, this.width, this.height, offsetX, offsetY, width, height);
+		context.drawImage(this.image, sx, sy, this.width, this.height, offsetX, offsetY, this.width * scaleX, this.height * scaleY);
 
 		return this;	
 	}
