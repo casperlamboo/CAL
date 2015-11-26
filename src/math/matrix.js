@@ -254,4 +254,15 @@ export default class Matrix {
 
 		return this;
 	}
+
+	clone () {
+		return new Matrix({
+			matrix: this._matrix, 
+			x: this._x, 
+			y: this._y, 
+			sx: this._sx, 
+			sy: this._sy, 
+			rotation: this._rotation
+		});
+	}
 }
