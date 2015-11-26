@@ -186,6 +186,13 @@ export default class Matrix {
 
 		return matrix;
 	}
+
+	normalize () {
+		let matrix = this.clone();
+		matrix.x = 0;
+		matrix.y = 0;
+
+		return matrix;
 	}
 
 	copyMatrix (matrix) {
