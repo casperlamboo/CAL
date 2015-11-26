@@ -29,8 +29,11 @@ export default class Group extends Surface {
 			start: new Vector(), 
 			delta: new Vector(), 
 			length: 0, 
+			finger: 0, 
 			down: false
 		}
+
+		this.touches = [];
 
 		this.lastTime = new Date().getTime();
 
@@ -57,13 +60,13 @@ export default class Group extends Surface {
 					var x = this.mouse.startX = Math.round(this.image.width / this.image.clientWidth * offsetX);
 					var y = this.mouse.startY = Math.round(this.image.height / this.image.clientHeight * offsetY);
 
-					this.mouse.position.copy(new Vector(x, y));
+					this.mouse.position.set(x, y);
 					this.mouse.start.copy(this.mouse.position);
 					this.mouse.delta.identity();
 					this.mouse.length = 0;
 					this.mouse.down = true;
 
-					this.mouseDown(this.mouse);
+					this.mouseDown(this.mouse, 0);
 					break;
 
 				case 'mouseup':
@@ -74,10 +77,10 @@ export default class Group extends Surface {
 					var x = Math.round(this.image.width / this.image.clientWidth * offsetX);
 					var y = Math.round(this.image.height / this.image.clientHeight * offsetY);
 
-					this.mouse.position.copy(new Vector(x, y));
+					this.mouse.position.set(x, y);
 					this.mouse.down = false;
 
-					this.mouseUp(this.mouse);
+					this.mouseUp(this.mouse, 0);
 
 					this.mouse.start.identity();
 					this.mouse.delta.identity();
@@ -107,61 +110,110 @@ export default class Group extends Surface {
 				case 'touchstart':
 					event.preventDefault();
 
-					if (event.touches.length === 1) {
-						var touch = event.touches[0];
+					let identifiers = this.touches.map(({identifier}) => identifier);
 
+					for (let touch of Array.from(event.touches)) {
+						// new finger? 
+						if (identifiers.indexOf(touch.identifier) !== -1) {
+							continue;
+						}
+
+						// get location in canvas coordinate system
 						var offsetX = touch.pageX - this.image.offsetLeft;
 						var offsetY = touch.pageY - this.image.offsetTop;
 
 						var x = this.mouse.startX = Math.round(this.image.width / this.image.clientWidth * offsetX);
 						var y = this.mouse.startY = Math.round(this.image.height / this.image.clientHeight * offsetY);
 
-						this.mouse.position.copy(new Vector(x, y));
-						this.mouse.start.copy(this.mouse.position);
-						this.mouse.delta.identity();
-						this.mouse.length = 0;
-						this.mouse.down = true;
 
-						this.mouseDown(this.mouse);
+						// determine finger index					
+						let finger = this.touches.length;
+						// if there is a "hole" in the finger indexes list it will use the first hole index 
+						let fingers = this.touches.map(({finger}) => finger).sort();
+						for (let i = 0; i < fingers.length; i ++) {
+							if (i !== fingers[i]) {
+								finger = i;
+								break;
+							}
+						}
+
+						let touchObject = {
+							position: new Vector(x, y), 
+							start: new Vector(x, y), 
+							delta: new Vector(0, 0), 
+							length: 0, 
+							finger: finger, 
+							identifier: touch.identifier, 
+							down: true
+						};
+
+						this.touches.push(touchObject);
+
+						this.mouseDown(touchObject, finger);
 					}
+
+					this.touchStart(this.touches);
+
 					break;
 
 				case 'touchmove':
 					event.preventDefault();
 
-					var touch = event.touches[0];
+					identifiers = this.touches.map(({identifier}) => identifier);
 
-					var offsetX = touch.pageX - this.image.offsetLeft;
-					var offsetY = touch.pageY - this.image.offsetTop;
+					for (let touch of Array.from(event.touches)) {
+						let identifier = touch.identifier;
+						let index = identifiers.indexOf(identifier);
 
-					var x = Math.round(this.image.width / this.image.clientWidth * offsetX);
-					var y = Math.round(this.image.height / this.image.clientHeight * offsetY);
-					
-					var position = new Vector(x, y);
+						let touchObject = this.touches[index];
 
-					this.mouse.length += this.mouse.position.distanceTo(position);
-					
-					this.mouse.position.copy(position);
+						if (!touchObject) {
+							continue;
+						}
 
-					if (this.mouse.down) {
-						this.mouse.delta.copy(this.mouse.position.subtract(this.mouse.start));
+						let offsetX = touch.pageX - this.image.offsetLeft;
+						let offsetY = touch.pageY - this.image.offsetTop;
+
+						let x = Math.round(this.image.width / this.image.clientWidth * offsetX);
+						let y = Math.round(this.image.height / this.image.clientHeight * offsetY);
+
+						let position = new Vector(x, y);
+
+						let delta = touchObject.position.distanceTo(position);
+
+						if (delta > 0) {
+							touchObject.length += delta;
+
+							touchObject.position.copy(position);
+							touchObject.delta.copy(position.subtract(touchObject.start));
+
+							this.mouseMove(touchObject, index);
+						}
 					}
 
-					this.mouseMove(this.mouse);
+					this.touchMove(this.touches);
+
 					break;
 
 				case 'touchend':
 					event.preventDefault();
 
-					if (this.useCanvas && event.touches.length === 0) {
-						this.mouse.down = false;
+					identifiers = Array.from(event.touches).map(({identifier}) => identifier);
 
-						this.mouseUp(this.mouse);
+					for (let touchObject of Array.from(this.touches)) {
+						if (touchObject && identifiers.indexOf(touchObject.identifier) === -1) {
+							touchObject.down = false;
 
-						this.mouse.start.identity();
-						this.mouse.delta.identity();
-						this.mouse.length = 0;
+							let index = this.touches.indexOf(touchObject);
+
+							this.touches.splice(index, 1);
+
+							this.mouseUp(touchObject, index);
+						}
 					}
+
+					this.touchEnd(this.touches);
+
 					break;
 
 				case 'keydown':
@@ -306,64 +358,67 @@ export default class Group extends Surface {
 		}
 	}
 
-	mouseDown (mouse) {
-		let position = mouse.position.applyMatrix(this.inverseMatrix());
-		let start = mouse.start.applyMatrix(this.inverseMatrix());
+	mouseDown (mouse, finger) {
+		let matrix = this.inverseMatrix();
+		let position = mouse.position.applyMatrix(matrix);
+		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
-			position: position, 
-			start: start, 
+			...mouse, 
+			position,
+			start, 
 			delta: position.subtract(start), 
-			length: mouse.length * this.sx * this.sy, 
-			down: mouse.down
-		}
+			length: mouse.length * this.sx * this.sy
+		};
 
 		let objects = Array.from(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseDown !== undefined) {
-				if (object.mouseDown(mouse, this)) {
+				if (object.mouseDown(mouse, finger)) {
 					break;
 				}
 			}
 		}
 	}
 
-	mouseUp (mouse) {
-		let position = mouse.position.applyMatrix(this.inverseMatrix());
-		let start = mouse.start.applyMatrix(this.inverseMatrix());
+	mouseUp (mouse, finger) {
+		let matrix = this.inverseMatrix();
+		let position = mouse.position.applyMatrix(matrix);
+		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
-			position: position, 
-			start: start, 
+			...mouse, 
+			position,
+			start, 
 			delta: position.subtract(start), 
-			length: mouse.length * this.sx * this.sy, 
-			down: mouse.down
-		}
+			length: mouse.length * this.sx * this.sy
+		};
 
 		let objects = Array.from(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseUp !== undefined) {
-				if (object.mouseUp(mouse, this)) {
+				if (object.mouseUp(mouse, finger)) {
 					break;
 				}
 			}
 		}
 	}
 
-	mouseMove (mouse) {
-		let position = mouse.position.applyMatrix(this.inverseMatrix());
-		let start = mouse.start.applyMatrix(this.inverseMatrix());
+	mouseMove (mouse, finger) {
+		let matrix = this.inverseMatrix();
+		let position = mouse.position.applyMatrix(matrix);
+		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
-			position: position, 
-			start: start, 
+			...mouse, 
+			position,
+			start, 
 			delta: position.subtract(start), 
-			length: mouse.length * this.sx * this.sy, 
-			down: mouse.down
+			length: mouse.length * this.sx * this.sy
 		}
 
 		let objects = Array.from(this.objects);
@@ -371,7 +426,91 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseMove !== undefined) {
-				if (object.mouseMove(mouse, this)) {
+				if (object.mouseMove(mouse, finger)) {
+					break;
+				}
+			}
+		}
+	}
+
+	touchStart (touches) {
+		let matrix = this.inverseMatrix();
+
+		touches = touches.map((touch) => {
+			let position = touch.position.applyMatrix(matrix);
+			let start = touch.start.applyMatrix(matrix);
+
+			return {
+				...touch, 
+				position,
+				start, 
+				delta: position.subtract(start), 
+				length: touch.length * this.sx * this.sy
+			};
+		});
+
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
+			if (object.useCanvas !== true && object.active && object.touchStart !== undefined) {
+				if (object.touchStart(touches)) {
+					break;
+				}
+			}
+		}
+	}
+
+	touchMove (touches) {
+		let matrix = this.inverseMatrix();
+
+		touches = touches.map((touch) => {
+			let position = touch.position.applyMatrix(matrix);
+			let start = touch.start.applyMatrix(matrix);
+
+			return {
+				...touch, 
+				position,
+				start, 
+				delta: position.subtract(start), 
+				length: touch.length * this.sx * this.sy
+			};
+		});
+
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
+			if (object.useCanvas !== true && object.active && object.touchMove !== undefined) {
+				if (object.touchMove(touches)) {
+					break;
+				}
+			}
+		}
+	}
+
+	touchEnd (touches) {
+		let matrix = this.inverseMatrix();
+
+		touches = touches.map((touch) => {
+			let position = touch.position.applyMatrix(matrix);
+			let start = touch.start.applyMatrix(matrix);
+
+			return {
+				...touch, 
+				position,
+				start, 
+				delta: position.subtract(start), 
+				length: touch.length * this.sx * this.sy
+			};
+		});
+
+		let objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			let object = objects[i];
+			if (object.useCanvas !== true && object.active && object.touchEnd !== undefined) {
+				if (object.touchEnd(touches)) {
 					break;
 				}
 			}
