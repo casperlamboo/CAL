@@ -149,7 +149,7 @@ export default class Group extends Surface {
 
 						this.touches.push(touchObject);
 
-						this.mouseDown(touchObject, finger);
+						this.mouseDown(touchObject);
 					}
 
 					this.touchStart(this.touches);
@@ -358,7 +358,7 @@ export default class Group extends Surface {
 		}
 	}
 
-	mouseDown (mouse, finger) {
+	mouseDown (mouse) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
 		let start = mouse.start.applyMatrix(matrix);
@@ -376,14 +376,14 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseDown !== undefined) {
-				if (object.mouseDown(mouse, finger)) {
+				if (object.mouseDown(mouse, this)) {
 					break;
 				}
 			}
 		}
 	}
 
-	mouseUp (mouse, finger) {
+	mouseUp (mouse) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
 		let start = mouse.start.applyMatrix(matrix);
@@ -401,14 +401,14 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseUp !== undefined) {
-				if (object.mouseUp(mouse, finger)) {
+				if (object.mouseUp(mouse, this)) {
 					break;
 				}
 			}
 		}
 	}
 
-	mouseMove (mouse, finger) {
+	mouseMove (mouse) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
 		let start = mouse.start.applyMatrix(matrix);
@@ -426,7 +426,7 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseMove !== undefined) {
-				if (object.mouseMove(mouse, finger)) {
+				if (object.mouseMove(mouse, this)) {
 					break;
 				}
 			}
