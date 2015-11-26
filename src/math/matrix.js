@@ -196,16 +196,15 @@ export default class Matrix {
 	}
 
 	copyMatrix (matrix) {
-		this._matrix = [...matrix.matrix]
-		this._x = matrix.x;
-		this._y = matrix.y;
-		this._sx = matrix.sx;
-		this._sy = matrix.sy;
-		this._rotation = matrix.rotation;
+		this._matrix = matrix._matrix ? [...matrix._matrix] : undefined;
+		this._x = matrix._x;
+		this._y = matrix._y;
+		this._sx = matrix._sx;
+		this._sy = matrix._sy;
+		this._rotation = matrix._rotation;
 
 		return this;
 	}
-
 	setMatrixContext (context) {
 		let m = this.matrix;
 		context.transform(m[0], m[3], m[1], m[4], m[2], m[5]);
