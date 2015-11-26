@@ -180,10 +180,12 @@ export default class Matrix {
 	}
 
 	translate (x, y) {
-		this.x += x;
-		this.y += y;
+		let matrix = this.clone();
+		matrix.x += x;
+		matrix.y += y;
 
-		return this;
+		return matrix;
+	}
 	}
 
 	copyMatrix (matrix) {
