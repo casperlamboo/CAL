@@ -16,7 +16,12 @@ export default class Shape extends Matrix {
 			lineWidth = 0, 
 			lineJoin = 'round', 
 			lineCap = 'round', 
-			points = []
+			points = [], 
+			shadow = false, 
+			shadowOffsetX = 0, 
+			shadowOffsetY = 0, 
+			shadowBlur = 10, 
+			shadowColor = new Color()
 		} = options;
 
 		this.visible = visible;
@@ -29,6 +34,12 @@ export default class Shape extends Matrix {
 		this.lineWidth = lineWidth;
 		this.lineJoin = lineJoin;
 		this.lineCap = lineCap;
+
+		this.shadow = shadow;
+		this.shadowOffsetX = shadowOffsetX;
+		this.shadowOffsetY = shadowOffsetY;
+		this.shadowBlur = shadowBlur;
+		this.shadowColor = shadowColor;
 
 		this.points = points;
 	}
@@ -264,6 +275,14 @@ export default class Shape extends Matrix {
 	draw (context, matrix) {
 		this.setContext(context, matrix);
 
+		if (this.shadow) {
+			context.save();
+			this.shadowColor.setShadow(context);
+			context.shadowBlur = this.shadowBlur;
+			context.shadowOffsetX = this.shadowOffsetX;
+			context.shadowOffsetY = this.shadowOffsetY;
+		}
+
 		if (this.shapeColor) {
 			this.shapeColor.setFill(context);
 			context.fill();
@@ -276,6 +295,10 @@ export default class Shape extends Matrix {
 			context.lineCap = this.lineCap;
 			this.lineColor.setStroke(context);
 			context.stroke();
+		}
+
+		if (this.shadow) {
+			context.restore();
 		}
 	}
 };

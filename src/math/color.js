@@ -26,14 +26,24 @@ export default class Color {
 		}
 	}
 
+	getString () {
+		return `rgba(${this.r}, ${this.g} , ${this.b} , ${this.a})`;
+	}
+
 	setStroke (context) {
-		context.strokeStyle = `rgba(${this.r}, ${this.g} , ${this.b} , ${this.a})`;
+		context.strokeStyle = this.getString();
 
 		return this;
 	}
 
 	setFill (context) {
-		context.fillStyle = `rgba(${this.r} , ${this.g} , ${this.b} , ${this.a})`;
+		context.fillStyle = this.getString();
+
+		return this;
+	}
+
+	setShadow (context) {
+		context.shadowColor = this.getString();
 
 		return this;
 	}
