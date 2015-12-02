@@ -57,8 +57,8 @@ export default class Group extends Surface {
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
-					var x = this.mouse.startX = Math.round(this.image.width / this.image.clientWidth * offsetX);
-					var y = this.mouse.startY = Math.round(this.image.height / this.image.clientHeight * offsetY);
+					var x = this.mouse.startX = this.image.width / this.image.clientWidth * offsetX;
+					var y = this.mouse.startY = this.image.height / this.image.clientHeight * offsetY;
 
 					this.mouse.position.set(x, y);
 					this.mouse.start.copy(this.mouse.position);
@@ -74,8 +74,8 @@ export default class Group extends Surface {
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
-					var x = Math.round(this.image.width / this.image.clientWidth * offsetX);
-					var y = Math.round(this.image.height / this.image.clientHeight * offsetY);
+					var x = this.image.width / this.image.clientWidth * offsetX;
+					var y = this.image.height / this.image.clientHeight * offsetY;
 
 					this.mouse.position.set(x, y);
 					this.mouse.down = false;
@@ -91,8 +91,8 @@ export default class Group extends Surface {
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
-					var x = Math.round(this.image.width / this.image.clientWidth * offsetX);
-					var y = Math.round(this.image.height / this.image.clientHeight * offsetY);
+					var x = this.image.width / this.image.clientWidth * offsetX;
+					var y = this.image.height / this.image.clientHeight * offsetY;
 
 					var position = new Vector(x, y);
 
@@ -122,8 +122,8 @@ export default class Group extends Surface {
 						var offsetX = touch.pageX - this.image.offsetLeft;
 						var offsetY = touch.pageY - this.image.offsetTop;
 
-						var x = this.mouse.startX = Math.round(this.image.width / this.image.clientWidth * offsetX);
-						var y = this.mouse.startY = Math.round(this.image.height / this.image.clientHeight * offsetY);
+						var x = this.mouse.startX = this.image.width / this.image.clientWidth * offsetX;
+						var y = this.mouse.startY = this.image.height / this.image.clientHeight * offsetY;
 
 
 						// determine finger index					
@@ -149,7 +149,7 @@ export default class Group extends Surface {
 
 						this.touches.push(touchObject);
 
-						this.mouseDown(touchObject);
+						this.mouseDown(touchObject, finger);
 					}
 
 					this.touchStart(this.touches);
@@ -174,8 +174,8 @@ export default class Group extends Surface {
 						let offsetX = touch.pageX - this.image.offsetLeft;
 						let offsetY = touch.pageY - this.image.offsetTop;
 
-						let x = Math.round(this.image.width / this.image.clientWidth * offsetX);
-						let y = Math.round(this.image.height / this.image.clientHeight * offsetY);
+						let x = this.image.width / this.image.clientWidth * offsetX;
+						let y = this.image.height / this.image.clientHeight * offsetY;
 
 						let position = new Vector(x, y);
 
@@ -358,7 +358,7 @@ export default class Group extends Surface {
 		}
 	}
 
-	mouseDown (mouse) {
+	mouseDown (mouse, finger) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
 		let start = mouse.start.applyMatrix(matrix);
@@ -383,7 +383,7 @@ export default class Group extends Surface {
 		}
 	}
 
-	mouseUp (mouse) {
+	mouseUp (mouse, finger) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
 		let start = mouse.start.applyMatrix(matrix);
@@ -408,7 +408,7 @@ export default class Group extends Surface {
 		}
 	}
 
-	mouseMove (mouse) {
+	mouseMove (mouse, finger) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
 		let start = mouse.start.applyMatrix(matrix);
@@ -454,7 +454,7 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.touchStart !== undefined) {
-				if (object.touchStart(touches)) {
+				if (object.touchStart(touches, this)) {
 					break;
 				}
 			}
@@ -482,7 +482,7 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.touchMove !== undefined) {
-				if (object.touchMove(touches)) {
+				if (object.touchMove(touches, this)) {
 					break;
 				}
 			}
@@ -510,7 +510,7 @@ export default class Group extends Surface {
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.touchEnd !== undefined) {
-				if (object.touchEnd(touches)) {
+				if (object.touchEnd(touches, this)) {
 					break;
 				}
 			}
@@ -526,9 +526,11 @@ export default class Group extends Surface {
 				if (object instanceof Group && !object.useCanvas) {
 					if (object.clearCanvas || object.autoClearCanvas) {
 						this.clearCanvas = true;
+						object.clearCanvas = false;
 					}
 					if (object.drawCanvas || object.autoDrawCanvas) {
 						this.drawCanvas = true;
+						object.drawCanvas = false;
 					}
 				}
 
@@ -542,7 +544,6 @@ export default class Group extends Surface {
 				this.clear();
 			}
 			if (this.drawCanvas || this.autoDrawCanvas) {
-				this.drawCanvas = false;
 				this.draw();
 			}
 		}
@@ -559,6 +560,8 @@ export default class Group extends Surface {
 	}
 
 	draw (context, matrix) {
+		this.drawCanvas = false;
+
 		if (this.useCanvas) {
 			context = this.context;
 			matrix = this;
