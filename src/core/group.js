@@ -24,7 +24,7 @@ export default class Group extends Surface {
 		this.autoClearCanvas = autoClearCanvas;
 		this.autoDrawCanvas = autoDrawCanvas;
 
-		this.mouse = {
+		this._mouse = {
 			position: new Vector(), 
 			start: new Vector(), 
 			delta: new Vector(), 
@@ -33,11 +33,11 @@ export default class Group extends Surface {
 			down: false
 		}
 
-		this.touches = [];
+		this._touches = [];
 
-		this.lastTime = new Date().getTime();
+		this._lastTime = new Date().getTime();
 
-		this.keysDown = [];
+		this._keysDown = [];
 		this.focus = true;
 
 		window.addEventListener('keydown', this);
@@ -60,11 +60,11 @@ export default class Group extends Surface {
 					var x = this.mouse.startX = this.image.width / this.image.clientWidth * offsetX;
 					var y = this.mouse.startY = this.image.height / this.image.clientHeight * offsetY;
 
-					this.mouse.position.set(x, y);
-					this.mouse.start.copy(this.mouse.position);
-					this.mouse.delta.identity();
-					this.mouse.length = 0;
-					this.mouse.down = true;
+					this._mouse.position.set(x, y);
+					this._mouse.start.copy(this._mouse.position);
+					this._mouse.delta.identity();
+					this._mouse.length = 0;
+					this._mouse.down = true;
 
 					this.mouseDown(this.mouse, 0);
 					break;
@@ -77,14 +77,14 @@ export default class Group extends Surface {
 					var x = this.image.width / this.image.clientWidth * offsetX;
 					var y = this.image.height / this.image.clientHeight * offsetY;
 
-					this.mouse.position.set(x, y);
-					this.mouse.down = false;
+					this._mouse.position.set(x, y);
+					this._mouse.down = false;
 
 					this.mouseUp(this.mouse, 0);
 
-					this.mouse.start.identity();
-					this.mouse.delta.identity();
-					this.mouse.length = 0;
+					this._mouse.start.identity();
+					this._mouse.delta.identity();
+					this._mouse.length = 0;
 					break;
 
 				case 'mousemove':
@@ -96,12 +96,12 @@ export default class Group extends Surface {
 
 					var position = new Vector(x, y);
 
-					this.mouse.length += this.mouse.position.distanceTo(position);
+					this._mouse.length += this._mouse.position.distanceTo(position);
 					
-					this.mouse.position.copy(position);
+					this._mouse.position.copy(position);
 
-					if (this.mouse.down) {
-						this.mouse.delta.copy(this.mouse.position.subtract(this.mouse.start));
+					if (this._mouse.down) {
+						this._mouse.delta.copy(this._mouse.position.subtract(this._mouse.start));
 					}
 
 					this.mouseMove(this.mouse);
@@ -110,7 +110,7 @@ export default class Group extends Surface {
 				case 'touchstart':
 					event.preventDefault();
 
-					let identifiers = this.touches.map(({identifier}) => identifier);
+					let identifiers = this._touches.map(({identifier}) => identifier);
 
 					for (let touch of Array.from(event.touches)) {
 						// new finger? 
@@ -127,9 +127,9 @@ export default class Group extends Surface {
 
 
 						// determine finger index					
-						let finger = this.touches.length;
+						let finger = this._touches.length;
 						// if there is a "hole" in the finger indexes list it will use the first hole index 
-						let fingers = this.touches.map(({finger}) => finger).sort();
+						let fingers = this._touches.map(({finger}) => finger).sort();
 						for (let i = 0; i < fingers.length; i ++) {
 							if (i !== fingers[i]) {
 								finger = i;
@@ -147,25 +147,25 @@ export default class Group extends Surface {
 							down: true
 						};
 
-						this.touches.push(touchObject);
+						this._touches.push(touchObject);
 
 						this.mouseDown(touchObject, finger);
 					}
 
-					this.touchStart(this.touches);
+					this.touchStart(this._touches);
 
 					break;
 
 				case 'touchmove':
 					event.preventDefault();
 
-					identifiers = this.touches.map(({identifier}) => identifier);
+					identifiers = this._touches.map(({identifier}) => identifier);
 
 					for (let touch of Array.from(event.touches)) {
 						let identifier = touch.identifier;
 						let index = identifiers.indexOf(identifier);
 
-						let touchObject = this.touches[index];
+						let touchObject = this._touches[index];
 
 						if (!touchObject) {
 							continue;
@@ -191,7 +191,7 @@ export default class Group extends Surface {
 						}
 					}
 
-					this.touchMove(this.touches);
+					this.touchMove(this._touches);
 
 					break;
 
@@ -200,41 +200,43 @@ export default class Group extends Surface {
 
 					identifiers = Array.from(event.touches).map(({identifier}) => identifier);
 
-					for (let touchObject of Array.from(this.touches)) {
+					for (let touchObject of Array.from(this._touches)) {
 						if (touchObject && identifiers.indexOf(touchObject.identifier) === -1) {
 							touchObject.down = false;
 
-							let index = this.touches.indexOf(touchObject);
+							let index = this._touches.indexOf(touchObject);
 
-							this.touches.splice(index, 1);
+							this._touches.splice(index, 1);
 
 							this.mouseUp(touchObject, index);
 						}
 					}
 
-					this.touchEnd(this.touches);
+					this.touchEnd(this._touches);
 
 					break;
 
 				case 'keydown':
-					if (!this.keysDown[event.keyCode]) {
-						this.keysDown[event.keyCode] = true;
+					if (this.useCanvas && !this._keysDown[event.keyCode]) {
+						this._keysDown[event.keyCode] = true;
 						this.keyDown({
 							key: KeyLookUp[event.keyCode],
 							keyCode: event.keyCode, 
-							keysDown: this.keysDown
+							keysDown: this._keysDown
 						});
 					}
 					break;
 
 				case 'keyup':
-					this.keysDown[event.keyCode] = false;
+					if (this.useCanvas) {
+						this._keysDown[event.keyCode] = false;
 
-					this.keyUp({
-						key: KeyLookUp[event.keyCode],
-						keyCode: event.keyCode, 
-						keysDown: this.keysDown
-					});
+						this.keyUp({
+							key: KeyLookUp[event.keyCode],
+							keyCode: event.keyCode, 
+							keysDown: this._keysDown
+						});
+					}
 					break;
 
 				case 'blur':
@@ -242,7 +244,7 @@ export default class Group extends Surface {
 					break;
 
 				case 'focus':
-					this.lastTime = new Date().getTime();
+					this._lastTime = new Date().getTime();
 					this.focus = true;
 					break;
 			}
@@ -552,8 +554,8 @@ export default class Group extends Surface {
 	cycle () {
 		if (this.focus) {
 			let currentTime = new Date().getTime();
-			let deltaTime = currentTime - this.lastTime;
-			this.lastTime = currentTime;
+			let deltaTime = currentTime - this._lastTime;
+			this._lastTime = currentTime;
 
 			this.step(deltaTime);
 		}
