@@ -69,8 +69,8 @@ export default class Group extends Surface {
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
-					var x = this.mouse.startX = this.image.width / this.image.clientWidth * offsetX;
-					var y = this.mouse.startY = this.image.height / this.image.clientHeight * offsetY;
+					var x = this.image.width / this.image.clientWidth * offsetX;
+					var y = this.image.height / this.image.clientHeight * offsetY;
 
 					this._mouse.position.set(x, y);
 					this._mouse.start.copy(this._mouse.position);
@@ -134,8 +134,8 @@ export default class Group extends Surface {
 						var offsetX = touch.pageX - this.image.offsetLeft;
 						var offsetY = touch.pageY - this.image.offsetTop;
 
-						var x = this.mouse.startX = this.image.width / this.image.clientWidth * offsetX;
-						var y = this.mouse.startY = this.image.height / this.image.clientHeight * offsetY;
+						var x = this.image.width / this.image.clientWidth * offsetX;
+						var y = this.image.height / this.image.clientHeight * offsetY;
 
 
 						// determine finger index					
