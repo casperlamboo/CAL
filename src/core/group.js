@@ -46,6 +46,18 @@ export default class Group extends Surface {
 		window.addEventListener('focus', this);
 	}
 
+	get touches () {
+		return this.useCanvas ? this._touches : this.parent.touches;
+	}
+
+	get mouse () {
+		return this.useCanvas ? this._mouse : this.parent.mouse;
+	}
+
+	get keysDown () {
+		return this.useCanvas ? this._keysDown : this.parent.keysDown;
+	}
+
 	init () {
 		this.useCanvas = false;
 	}
