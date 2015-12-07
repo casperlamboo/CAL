@@ -55,8 +55,8 @@ export default class CollsionMap extends Matrix {
 		let imageData = surface.getImageData();
 
 		this.map = [];
-		for (let dataIndex = 3, mapIndex = 0; dataIndex < imageData.data.length; dataIndex += 4, mapIndex ++) {
-			this.map[mapIndex] = (imageData.data[dataIndex] > 125);
+		for (let index = 3; index < imageData.data.length; index += 4) {
+			this.map.push(imageData.data[index] > 125);
 		}
 
 		return this;
