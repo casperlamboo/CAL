@@ -49,6 +49,11 @@ export default class Matrix {
 	}
 
 	set sx (sx) {
+		this.rotation;
+		this.x;
+		this.y;
+		this.sy;
+
 		this._sx = sx;
 
 		delete this._matrix;
@@ -63,7 +68,23 @@ export default class Matrix {
 	}
 
 	set sy (sy) {
+		this.rotation;
+		this.x;
+		this.y;
+		this.sx;
+
 		this._sy = sy;
+
+		delete this._matrix;
+	}
+
+	set scale (scale) {
+		this.rotation;
+		this.x;
+		this.y;
+
+		this._sx = scale;
+		this._sy = scale;
 
 		delete this._matrix;
 	}
@@ -77,6 +98,11 @@ export default class Matrix {
 	}
 
 	set rotation (rotation) {
+		this.x;
+		this.y;
+		this.sx;
+		this.sy;
+
 		this._rotation = rotation;
 
 		delete this._matrix;
@@ -91,6 +117,11 @@ export default class Matrix {
 	}
 
 	set x (x) {
+		this.rotation;
+		this.y;
+		this.sx;
+		this.sy;
+		
 		this._x = x;
 
 		if (this._matrix !== undefined) {
@@ -107,12 +138,16 @@ export default class Matrix {
 	}
 
 	set y (y) {
+		this.rotation;
+		this.x;
+		this.sx;
+		this.sy;
+
 		this._y = y;
 
 		if (this._matrix !== undefined) {
 			this._matrix[5] = y;
 		}
-
  	}
 
 	get matrix () {
