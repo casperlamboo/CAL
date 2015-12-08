@@ -310,6 +310,9 @@ export default class Group extends Surface {
 			if (this.objects.indexOf(object) === -1) {
 				object.parent = this;
 				this.objects.push(object);
+				if (object.useCanvas) {
+					object.useCanvas = false;
+				}
 				if (object.init) {
 					object.init(this);
 				}
