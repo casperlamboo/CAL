@@ -18,7 +18,7 @@ export default class CollsionMap extends Matrix {
 
 		return this;
 	}
-	
+
 	createFromShape (shape, {margin = 0, applyMatrix = false, fill = false}) {
 		let boundingBox = shape.getBoundingBox(applyMatrix);
 
@@ -31,21 +31,21 @@ export default class CollsionMap extends Matrix {
 		this.y = -boundingBox.top + lineWidth;
 
 		let collisionShape = new Shape({
-			points: shape.points, 
-			lineWidth: lineWidth * 2, 
-			lineColor: new Color(), 
-			shapeColor: ((shape.shapeColor || fill) ? new Color() : false), 
+			points: shape.points,
+			lineWidth: lineWidth * 2,
+			lineColor: new Color(),
+			shapeColor: ((shape.shapeColor || fill) ? new Color() : false),
 			closePath: (shape.shapeColor || shape.closePath)
 		}).copyMatrix(shape);
 
 		this._applyMap(collisionShape, applyMatrix);
 
-		return this;		
+		return this;
 	}
 
 	_applyMap (image, applyMatrix) {
 		let surface = new Surface({
-			width: this.width, 
+			width: this.width,
 			height: this.height
 		});
 

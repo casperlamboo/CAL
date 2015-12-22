@@ -8,8 +8,8 @@ export default class Group extends Surface {
 		super(options);
 
 		let {
-			useCanvas = true, 
-			autoClearCanvas = false, 
+			useCanvas = true,
+			autoClearCanvas = false,
 			autoDrawCanvas = false
 		} = options;
 
@@ -25,11 +25,11 @@ export default class Group extends Surface {
 		this.autoDrawCanvas = autoDrawCanvas;
 
 		this._mouse = {
-			position: new Vector(), 
-			start: new Vector(), 
-			delta: new Vector(), 
-			length: 0, 
-			finger: 0, 
+			position: new Vector(),
+			start: new Vector(),
+			delta: new Vector(),
+			length: 0,
+			finger: 0,
 			down: false
 		}
 
@@ -109,7 +109,7 @@ export default class Group extends Surface {
 					var position = new Vector(x, y);
 
 					this._mouse.length += this._mouse.position.distanceTo(position);
-					
+
 					this._mouse.position.copy(position);
 
 					if (this._mouse.down) {
@@ -125,7 +125,7 @@ export default class Group extends Surface {
 					let identifiers = this._touches.map(({identifier}) => identifier);
 
 					for (let touch of Array.from(event.touches)) {
-						// new finger? 
+						// new finger?
 						if (identifiers.indexOf(touch.identifier) !== -1) {
 							continue;
 						}
@@ -138,9 +138,9 @@ export default class Group extends Surface {
 						var y = this.image.height / this.image.clientHeight * offsetY;
 
 
-						// determine finger index					
+						// determine finger index
 						let finger = this._touches.length;
-						// if there is a "hole" in the finger indexes list it will use the first hole index 
+						// if there is a "hole" in the finger indexes list it will use the first hole index
 						let fingers = this._touches.map(({finger}) => finger).sort();
 						for (let i = 0; i < fingers.length; i ++) {
 							if (i !== fingers[i]) {
@@ -150,12 +150,12 @@ export default class Group extends Surface {
 						}
 
 						let touchObject = {
-							position: new Vector(x, y), 
-							start: new Vector(x, y), 
-							delta: new Vector(0, 0), 
-							length: 0, 
-							finger: finger, 
-							identifier: touch.identifier, 
+							position: new Vector(x, y),
+							start: new Vector(x, y),
+							delta: new Vector(0, 0),
+							length: 0,
+							finger: finger,
+							identifier: touch.identifier,
 							down: true
 						};
 
@@ -233,7 +233,7 @@ export default class Group extends Surface {
 						this._keysDown[event.keyCode] = true;
 						this.keyDown({
 							key: KeyLookUp[event.keyCode],
-							keyCode: event.keyCode, 
+							keyCode: event.keyCode,
 							keysDown: this._keysDown
 						});
 					}
@@ -245,8 +245,27 @@ export default class Group extends Surface {
 
 						this.keyUp({
 							key: KeyLookUp[event.keyCode],
-							keyCode: event.keyCode, 
+							keyCode: event.keyCode,
 							keysDown: this._keysDown
+						});
+					}
+					break;
+
+				case 'mousewheel':
+					event.preventDefault();
+
+					if (this.useCanvas) {
+						const offsetX = event.pageX - this.image.offsetLeft;
+						const offsetY = event.pageY - this.image.offsetTop;
+
+						const x = this.image.width / this.image.clientWidth * offsetX;
+						const y = this.image.height / this.image.clientHeight * offsetY;
+
+						const position = new Vector(x, y);
+
+						this.mouseWheel({
+							delta: event.wheelDelta,
+							position
 						});
 					}
 					break;
@@ -259,6 +278,8 @@ export default class Group extends Surface {
 					this._lastTime = new Date().getTime();
 					this.focus = true;
 					break;
+
+
 			}
 		}
 	}
@@ -272,6 +293,7 @@ export default class Group extends Surface {
 		this.image.addEventListener('touchmove', this);
 		this.image.addEventListener('touchend', this);
 		this.image.addEventListener('touchout', this);
+		this.image.addEventListener('mousewheel', this);
 	}
 
 	_removeEventListeners () {
@@ -283,6 +305,7 @@ export default class Group extends Surface {
 		this.image.removeEventListener('touchmove', this);
 		this.image.removeEventListener('touchend', this);
 		this.image.removeEventListener('touchout', this);
+		this.image.removeEventListener('mousewheel', this);
 	}
 
 	setCanvas (canvas) {
@@ -349,6 +372,27 @@ export default class Group extends Surface {
 		});
 	}
 
+	mouseWheel (wheel) {
+		const matrix = this.inverseMatrix();
+		const position = wheel.position.applyMatrix(matrix);
+
+		wheel = {
+			...wheel,
+			position
+		};
+
+		const objects = Array.from(this.objects);
+
+		for (let i = objects.length - 1; i >= 0; i --) {
+			const object = objects[i];
+			if (object.active && object.mouseWheel !== undefined) {
+				if (object.mouseWheel(wheel, this)) {
+					break;
+				}
+			}
+		}
+	}
+
 	keyDown (key) {
 		let objects = Array.from(this.objects);
 
@@ -381,10 +425,10 @@ export default class Group extends Surface {
 		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
-			...mouse, 
+			...mouse,
 			position,
-			start, 
-			delta: position.subtract(start), 
+			start,
+			delta: position.subtract(start),
 			length: mouse.length * this.sx * this.sy
 		};
 
@@ -406,10 +450,10 @@ export default class Group extends Surface {
 		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
-			...mouse, 
+			...mouse,
 			position,
-			start, 
-			delta: position.subtract(start), 
+			start,
+			delta: position.subtract(start),
 			length: mouse.length * this.sx * this.sy
 		};
 
@@ -431,10 +475,10 @@ export default class Group extends Surface {
 		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
-			...mouse, 
+			...mouse,
 			position,
-			start, 
-			delta: position.subtract(start), 
+			start,
+			delta: position.subtract(start),
 			length: mouse.length * this.sx * this.sy
 		}
 
@@ -458,10 +502,10 @@ export default class Group extends Surface {
 			let start = touch.start.applyMatrix(matrix);
 
 			return {
-				...touch, 
+				...touch,
 				position,
-				start, 
-				delta: position.subtract(start), 
+				start,
+				delta: position.subtract(start),
 				length: touch.length * this.sx * this.sy
 			};
 		});
@@ -486,10 +530,10 @@ export default class Group extends Surface {
 			let start = touch.start.applyMatrix(matrix);
 
 			return {
-				...touch, 
+				...touch,
 				position,
-				start, 
-				delta: position.subtract(start), 
+				start,
+				delta: position.subtract(start),
 				length: touch.length * this.sx * this.sy
 			};
 		});
@@ -514,10 +558,10 @@ export default class Group extends Surface {
 			let start = touch.start.applyMatrix(matrix);
 
 			return {
-				...touch, 
+				...touch,
 				position,
-				start, 
-				delta: position.subtract(start), 
+				start,
+				delta: position.subtract(start),
 				length: touch.length * this.sx * this.sy
 			};
 		});
