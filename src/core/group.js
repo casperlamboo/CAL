@@ -26,12 +26,25 @@ export default class Group extends Surface {
 
 		this._mouse = {
 			position: new Vector(),
-			start: new Vector(),
-			delta: new Vector(),
-			length: 0,
-			finger: 0,
-			down: false
-		}
+			down: [],
+			buttons: [{
+				start: new Vector(),
+				delta: new Vector(),
+				length: 0,
+				down: false
+			},
+			{
+				start: new Vector(),
+				delta: new Vector(),
+				length: 0,
+				down: false
+			}, {
+				start: new Vector(),
+				delta: new Vector(),
+				length: 0,
+				down: false
+			}]
+		};
 
 		this._touches = [];
 
@@ -66,6 +79,8 @@ export default class Group extends Surface {
 		if (this.useCanvas) {
 			switch (event.type) {
 				case 'mousedown':
+					var button = event.button;
+
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
@@ -73,16 +88,20 @@ export default class Group extends Surface {
 					var y = this.image.height / this.image.clientHeight * offsetY;
 
 					this._mouse.position.set(x, y);
-					this._mouse.start.copy(this._mouse.position);
-					this._mouse.delta.identity();
-					this._mouse.length = 0;
-					this._mouse.down = true;
+					this._mouse.buttons[button].start.copy(this._mouse.position);
+					this._mouse.buttons[button].delta.identity();
+					this._mouse.buttons[button].length = 0;
+					this._mouse.buttons[button].down = true;
 
-					this.mouseDown(this.mouse, 0);
+					this._mouse.down.push(button);
+
+					this.mouseDown(this._mouse, 0);
 					break;
 
 				case 'mouseup':
-				case 'mouseout':
+				// case 'mouseout':
+					var button = event.button;
+
 					var offsetX = event.pageX - this.image.offsetLeft;
 					var offsetY = event.pageY - this.image.offsetTop;
 
@@ -90,13 +109,15 @@ export default class Group extends Surface {
 					var y = this.image.height / this.image.clientHeight * offsetY;
 
 					this._mouse.position.set(x, y);
-					this._mouse.down = false;
+
+					var buttonIndex = this._mouse.down.indexOf(button);
+					this._mouse.down.splice(buttonIndex, 1);
 
 					this.mouseUp(this.mouse, 0);
 
-					this._mouse.start.identity();
-					this._mouse.delta.identity();
-					this._mouse.length = 0;
+					this._mouse.buttons[button].start.identity();
+					this._mouse.buttons[button].delta.identity();
+					this._mouse.buttons[button].length = 0;
 					break;
 
 				case 'mousemove':
@@ -112,8 +133,10 @@ export default class Group extends Surface {
 
 					this._mouse.position.copy(position);
 
-					if (this._mouse.down) {
-						this._mouse.delta.copy(this._mouse.position.subtract(this._mouse.start));
+					for (let button of this._mouse.buttons) {
+						if (button.down) {
+							button.delta.copy(this._mouse.position.subtract(button.start));
+						}
 					}
 
 					this.mouseMove(this.mouse);
@@ -279,7 +302,10 @@ export default class Group extends Surface {
 					this.focus = true;
 					break;
 
+				case 'contextmenu':
+					event.preventDefault();
 
+					break;
 			}
 		}
 	}
@@ -294,6 +320,7 @@ export default class Group extends Surface {
 		this.image.addEventListener('touchend', this);
 		this.image.addEventListener('touchout', this);
 		this.image.addEventListener('mousewheel', this);
+		this.image.addEventListener('contextmenu', this);
 	}
 
 	_removeEventListeners () {
@@ -306,6 +333,7 @@ export default class Group extends Surface {
 		this.image.removeEventListener('touchend', this);
 		this.image.removeEventListener('touchout', this);
 		this.image.removeEventListener('mousewheel', this);
+		this.image.removeEventListener('contextmenu', this);
 	}
 
 	setCanvas (canvas) {
@@ -422,14 +450,26 @@ export default class Group extends Surface {
 	mouseDown (mouse, finger) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
-		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
 			...mouse,
 			position,
-			start,
-			delta: position.subtract(start),
-			length: mouse.length * this.sx * this.sy
+			buttons: mouse.buttons.map((button) => {
+				if (button.down) {
+					const start = button.start.applyMatrix(matrix);
+					const delta = position.subtract(start);
+					const length = button.length * this.sx * this.sy;
+
+					return {
+						start,
+						delta,
+						length
+					};
+				}
+				else {
+					return button;
+				}
+			})
 		};
 
 		let objects = Array.from(this.objects);
@@ -447,14 +487,26 @@ export default class Group extends Surface {
 	mouseUp (mouse, finger) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
-		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
 			...mouse,
 			position,
-			start,
-			delta: position.subtract(start),
-			length: mouse.length * this.sx * this.sy
+			buttons: mouse.buttons.map((button) => {
+				if (button.down) {
+					const start = button.start.applyMatrix(matrix);
+					const delta = position.subtract(start);
+					const length = button.length * this.sx * this.sy;
+
+					return {
+						start,
+						delta,
+						length
+					};
+				}
+				else {
+					return button;
+				}
+			})
 		};
 
 		let objects = Array.from(this.objects);
@@ -472,15 +524,27 @@ export default class Group extends Surface {
 	mouseMove (mouse, finger) {
 		let matrix = this.inverseMatrix();
 		let position = mouse.position.applyMatrix(matrix);
-		let start = mouse.start.applyMatrix(matrix);
 
 		mouse = {
 			...mouse,
 			position,
-			start,
-			delta: position.subtract(start),
-			length: mouse.length * this.sx * this.sy
-		}
+			buttons: mouse.buttons.map((button) => {
+				if (button.down) {
+					const start = button.start.applyMatrix(matrix);
+					const delta = position.subtract(start);
+					const length = button.length * this.sx * this.sy;
+
+					return {
+						start,
+						delta,
+						length
+					};
+				}
+				else {
+					return button;
+				}
+			})
+		};
 
 		let objects = Array.from(this.objects);
 
