@@ -234,20 +234,22 @@ export default class Matrix {
 		const b = this;
 
 		if (a._x !== undefined && b._x !== undefined) {
-			return
+			return (
 				a._x === b._x &&
 				a._y === b._y &&
 				a._sx === b._sx &&
 				a._sy === b._sy &&
-				a._rotation === b._rotation;
+				a._rotation === b._rotation
+			);
 		} else {
-			return
-				a._matrix[0] === b._matrix[0] &&
-				a._matrix[1] === b._matrix[1] &&
-				a._matrix[2] === b._matrix[2] &&
-				a._matrix[3] === b._matrix[3] &&
-				a._matrix[4] === b._matrix[4] &&
-				a._matrix[5] === b._matrix[5];
+			return (
+				a.matrix[0] === b.matrix[0] &&
+				a.matrix[1] === b.matrix[1] &&
+				a.matrix[2] === b.matrix[2] &&
+				a.matrix[3] === b.matrix[3] &&
+				a.matrix[4] === b.matrix[4] &&
+				a.matrix[5] === b.matrix[5]
+			);
 		}
 	}
 
