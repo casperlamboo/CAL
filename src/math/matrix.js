@@ -121,7 +121,7 @@ export default class Matrix {
 		this.y;
 		this.sx;
 		this.sy;
-		
+
 		this._x = x;
 
 		if (this._matrix !== undefined) {
@@ -230,6 +230,27 @@ export default class Matrix {
 		return matrix;
 	}
 
+	equals (a) {
+		const b = this;
+
+		if (a._x !== undefined && b._x !== undefined) {
+			return
+				a._x === b._x &&
+				a._y === b._y &&
+				a._sx === b._sx &&
+				a._sy === b._sy &&
+				a._rotation === b._rotation;
+		} else {
+			return
+				a._matrix[0] === b._matrix[0] &&
+				a._matrix[1] === b._matrix[1] &&
+				a._matrix[2] === b._matrix[2] &&
+				a._matrix[3] === b._matrix[3] &&
+				a._matrix[4] === b._matrix[4] &&
+				a._matrix[5] === b._matrix[5];
+		}
+	}
+
 	copyMatrix (matrix) {
 		this._matrix = matrix._matrix ? [...matrix._matrix] : undefined;
 		this._x = matrix._x;
@@ -283,7 +304,7 @@ export default class Matrix {
 		let after = center.applyMatrix(this);
 
 		let offset = before.subtract(after);
-		
+
 		this.x += offset.x;
 		this.y += offset.y;
 
@@ -292,11 +313,11 @@ export default class Matrix {
 
 	clone () {
 		return new Matrix({
-			matrix: this._matrix, 
-			x: this._x, 
-			y: this._y, 
-			sx: this._sx, 
-			sy: this._sy, 
+			matrix: this._matrix,
+			x: this._x,
+			y: this._y,
+			sx: this._sx,
+			sy: this._sy,
 			rotation: this._rotation
 		});
 	}
