@@ -9,25 +9,35 @@ export default class Color {
 		}
 	}
 
-	setColor () {
-		if (typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
-			this.r = arguments[0];
-			this.g = arguments[1];
-			this.b = arguments[2];
-			this.a = (typeof arguments[3] === 'number') ? arguments[3] : 1;
+	setColor (...args) {
+		if (typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'number') {
+			this.setFromRGB(...args);
 		}
 		else if (typeof arguments[0] === 'number') {
-			let hex = Math.floor(arguments[0]);
-
-			this.r = hex >> 16 & 255;
-			this.g = hex >> 8 & 255;
-			this.b = hex & 255;
-			this.a = (typeof arguments[1] === 'number') ? arguments[1] : 1;
+			this.setFromHex(...args);
 		}
 	}
 
+	setFromRGB (r, g, b, alpha = 1) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+
+		this.a = alpha;
+	}
+
+	setFromHex (hex, alpha = 1) {
+		hex = Math.floor(hex);
+
+		this.r = hex >> 16 & 255;
+		this.g = hex >> 8 & 255;
+		this.b = hex & 255;
+
+		this.a = alpha;
+	}
+
 	getString () {
-		return `rgba(${this.r}, ${this.g} , ${this.b} , ${this.a})`;
+		return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
 	}
 
 	setStroke (context) {

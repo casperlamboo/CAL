@@ -1,6 +1,6 @@
 import * as CAL from 'src/index.js';
 
-let group = new CAL.Group({
+const group = new CAL.Group({
 	canvas: document.getElementById('CAL')
 });
 
@@ -22,18 +22,18 @@ class EasingsObject {
 			this.parent.remove(this.tween);
 		}
 
-		let targetObject = this;
-		let targetProperties = {
+		const targetObject = this;
+		const targetProperties = {
 			x: mouse.position.x
 		};
-		let duration = 2000;
-		let options = {
-			easing: CAL.Utils.Easings[this.easing], 
-			clearCanvas: true, 
+		const duration = 2000;
+		const options = {
+			easing: CAL.Utils.Easings[this.easing],
+			clearCanvas: true,
 			drawCanvas: true
 		};
 
-		this.tween = new CAL.Tween(targetObject, targetProperties, duration, options);
+		this.tween = new CAL.Tween(this, targetProperties, duration, options);
 
 		this.parent.add(this.tween);
 	}
@@ -44,13 +44,13 @@ class EasingsObject {
 }
 
 let y = 45;
-for (let i in CAL.Utils.Easings) {
-	group.add(new EasingsObject(y, i));
+for (let easing in CAL.Utils.Easings) {
+	group.add(new EasingsObject(y, easing));
 	y += 45;
 }
 
 (function loop () {
-	requestAnimFrame(loop);
-
 	group.cycle();
+
+	requestAnimFrame(loop);
 }());
