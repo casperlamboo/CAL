@@ -66,40 +66,8 @@ export default class Group extends Surface {
 		if (this.useCanvas) {
 			switch (event.type) {
 				case 'mousedown':
-					var button = event.button;
-
-					var offsetX = event.pageX - this.image.offsetLeft;
-					var offsetY = event.pageY - this.image.offsetTop;
-
-					var x = this.image.width / this.image.clientWidth * offsetX;
-					var y = this.image.height / this.image.clientHeight * offsetY;
-
-					var position = new Vector(x, y);
-
-					this.mouseDown({
-						position,
-						button
-					});
-					break;
-
 				case 'mouseup':
-				// case 'mouseout':
-					var button = event.button;
-
-					var offsetX = event.pageX - this.image.offsetLeft;
-					var offsetY = event.pageY - this.image.offsetTop;
-
-					var x = this.image.width / this.image.clientWidth * offsetX;
-					var y = this.image.height / this.image.clientHeight * offsetY;
-
-					var position = new Vector(x, y);
-
-					this.mouseUp({
-						position,
-						button
-					});
-					break;
-
+				case 'mouseout':
 				case 'mousemove':
 					var button = event.button;
 
@@ -111,10 +79,29 @@ export default class Group extends Surface {
 
 					var position = new Vector(x, y);
 
-					this.mouseMove({
-						position,
-						button
-					});
+					switch (event.type) {
+						case 'mousedown':
+							this.mouseDown({
+								position,
+								button
+							});
+							break;
+
+						case 'mouseout':
+						case 'mouseup':
+							this.mouseUp({
+								position,
+								button
+							});
+							break;
+
+						case 'mousemove':
+							this.mouseMove({
+								position,
+								button
+							});
+							break;
+					}
 					break;
 
 				case 'touchstart':
