@@ -595,7 +595,6 @@ export default class Group extends Surface {
 
 		if (this.useCanvas) {
 			if (this.clearCanvas || this.autoClearCanvas) {
-				this.clearCanvas = false;
 				this.clear();
 			}
 			if (this.drawCanvas || this.autoDrawCanvas) {
@@ -612,6 +611,12 @@ export default class Group extends Surface {
 
 			this.step(deltaTime);
 		}
+	}
+
+	clear () {
+		this.clearCanvas = false;
+
+		super.clear();
 	}
 
 	draw (context, matrix) {
