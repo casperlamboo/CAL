@@ -67,7 +67,7 @@ export default class Group extends Surface {
 			switch (event.type) {
 				case 'mousedown':
 				case 'mouseup':
-				// case 'mouseout':
+				case 'mouseout':
 				case 'mousemove':
 					var button = event.button;
 
@@ -87,7 +87,7 @@ export default class Group extends Surface {
 							});
 							break;
 
-						// case 'mouseout':
+						case 'mouseout':
 						case 'mouseup':
 							this.mouseUp({
 								position,
@@ -444,6 +444,10 @@ export default class Group extends Surface {
 
 			mouseObject = this.touches[index];
 			position = this.touches[index].position;
+		}
+
+		if (!mouseObject.down) {
+			return;
 		}
 
 		mouseObject.down = false;
