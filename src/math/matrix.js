@@ -323,4 +323,18 @@ export default class Matrix {
 			rotation: this._rotation
 		});
 	}
+
+	toJSON () {
+		return {
+			metadata: {
+				library: 'CAL',
+				type: 'Matrix'
+			},
+			matrix: this.matrix
+		};
+	}
+
+	fromJSON (json) {
+		this.matrix = json.matrix;
+	}
 }

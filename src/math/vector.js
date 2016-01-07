@@ -19,8 +19,7 @@ export default class Vector {
 	}
 
 	copy (vector) {
-		this.x = vector.x;
-		this.y = vector.y;
+		this.set(vector.x, vector.y);
 
 		return this;
 	}
@@ -138,5 +137,20 @@ export default class Vector {
 		context.lineTo(right.x, right.y);
 
 		context.stroke();
+	}
+
+	toJSON () {
+		return {
+			metadata: {
+				library: 'CAL',
+				type: 'Vector'
+			},
+			x: this.x,
+			y: this.y
+		};
+	}
+
+	fromJSON (json) {
+		this.copy(json);
 	}
 };
