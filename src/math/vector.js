@@ -152,5 +152,6 @@ export default class Vector {
 
 	fromJSON (json) {
 		this.copy(json);
+		return this;
 	}
 };

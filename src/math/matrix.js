@@ -336,5 +336,6 @@ export default class Matrix {
 
 	fromJSON (json) {
 		this.matrix = json.matrix;
+		return this;
 	}
 }
