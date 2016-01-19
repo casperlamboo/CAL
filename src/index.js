@@ -12,7 +12,7 @@ import text from './object/text.js';
 import timeLine from './object/timeline.js';
 import tween from './object/tween.js';
 import shape from './object/shape.js';
-import collisionMap from './object/CollisionMap.js';
+import collisionMap from './object/collisionmap.js';
 import star from './shapes/star.js';
 import polygon from './shapes/polygon.js';
 
