@@ -3,77 +3,76 @@ import { MathExtended } from '../core/utils.js';
 export default class Matrix {
 	constructor (options) {
 		if (options === undefined) {
-			this.identity;
-			return;
-		}
-
-		if (options instanceof Array) {
-			options = new Float64Array(options);
-		}
-
-		if (options instanceof Float64Array) {
-			this.hasMatrix = true;
-			this._matrix = options;
-
-			this.hasX = false;
-			this._x = 0;
-			this.hasY = false;
-			this._y = 0;
-			this.hasSx = false;
-			this._sx = 1;
-			this.hasSy = false;
-			this._sy = 1;
-			this.hasRotation = false;
-			this._rotation = 0;
+			this.identity();
 		} else {
-			if (options.matrix instanceof Array) {
-				options.matrix = new Float64Array(options.matrix);
+			if (options instanceof Array) {
+				options = new Float64Array(options);
 			}
 
-			if (options.matrix instanceof Float64Array) {
+			if (options instanceof Float64Array) {
 				this.hasMatrix = true;
-				this._matrix = options.matrix;
-			} else {
-				this.hasMatrix = false;
-				this._matrix  = new Float64Array([
-					1, 0, 0,
-					0, 1, 0
-				]);
-			}
-			if (typeof options.x === 'number') {
-				this.hasX = true;
-				this._x = options.x;
-			} else {
-				this.hasX = !this.hasMatrix;
+				this._matrix = options;
+
+				this.hasX = false;
 				this._x = 0;
-			}
-			if (typeof options.y === 'number') {
-				this.hasY = true;
-				this._y = options.y;
-			} else {
-				this.hasY = !this.hasMatrix;
+				this.hasY = false;
 				this._y = 0;
-			}
-			if (typeof options.sx === 'number') {
-				this.hasSx = true;
-				this._sx = options.sx;
-			} else {
-				this.hasSx = !this.hasMatrix;
+				this.hasSx = false;
 				this._sx = 1;
-			}
-			if (typeof options.sy === 'number') {
-				this.hasSy = true;
-				this._sy = options.sy;
-			} else {
-				this.hasSy = !this.hasMatrix;
+				this.hasSy = false;
 				this._sy = 1;
-			}
-			if (typeof options.rotation === 'number') {
-				this.hasRotation = true;
-				this._rotation = options.rotation;
-			} else {
-				this.hasRotation = !this.hasMatrix;
+				this.hasRotation = false;
 				this._rotation = 0;
+			} else {
+				if (options.matrix instanceof Array) {
+					options.matrix = new Float64Array(options.matrix);
+				}
+
+				if (options.matrix instanceof Float64Array) {
+					this.hasMatrix = true;
+					this._matrix = options.matrix;
+				} else {
+					this.hasMatrix = false;
+					this._matrix  = new Float64Array([
+						1, 0, 0,
+						0, 1, 0
+					]);
+				}
+				if (typeof options.x === 'number') {
+					this.hasX = true;
+					this._x = options.x;
+				} else {
+					this.hasX = !this.hasMatrix;
+					this._x = 0;
+				}
+				if (typeof options.y === 'number') {
+					this.hasY = true;
+					this._y = options.y;
+				} else {
+					this.hasY = !this.hasMatrix;
+					this._y = 0;
+				}
+				if (typeof options.sx === 'number') {
+					this.hasSx = true;
+					this._sx = options.sx;
+				} else {
+					this.hasSx = !this.hasMatrix;
+					this._sx = 1;
+				}
+				if (typeof options.sy === 'number') {
+					this.hasSy = true;
+					this._sy = options.sy;
+				} else {
+					this.hasSy = !this.hasMatrix;
+					this._sy = 1;
+				}
+				if (typeof options.rotation === 'number') {
+					this.hasRotation = true;
+					this._rotation = options.rotation;
+				} else {
+					this.hasRotation = !this.hasMatrix;
+					this._rotation = 0;
+				}
 			}
 		}
 	}
