@@ -1,47 +1,86 @@
-import {MathExtended} from '../core/utils.js';
+import { MathExtended } from '../core/utils.js';
 
 export default class Matrix {
 	constructor (options) {
 		if (options === undefined) {
-			this.identity();
+			this.identity;
+			return;
 		}
-		else if (options instanceof Array) {
-			this.matrix = options;
-		}
-		else {
-			let {matrix} = options;
 
+		if (options instanceof Array) {
+			options = new Float64Array(options);
+		}
+
+		if (options instanceof Float64Array) {
+			this.hasMatrix = true;
+			this._matrix = options;
+
+			this.hasX = false;
+			this._x = 0;
+			this.hasY = false;
+			this._y = 0;
+			this.hasSx = false;
+			this._sx = 1;
+			this.hasSy = false;
+			this._sy = 1;
+			this.hasRotation = false;
+			this._rotation = 0;
+		} else {
 			if (options.matrix instanceof Array) {
-				this.matrix = options.matrix;
+				options.matrix = new Float64Array(options.matrix);
+			}
+
+			if (options.matrix instanceof Float64Array) {
+				this.hasMatrix = true;
+				this._matrix = options.matrix;
+			} else {
+				this.hasMatrix = false;
+				this._matrix  = new Float64Array([
+					1, 0, 0,
+					0, 1, 0
+				]);
 			}
 			if (typeof options.x === 'number') {
+				this.hasX = true;
 				this._x = options.x;
+			} else {
+				this.hasX = !this.hasMatrix;
+				this._x = 0;
 			}
 			if (typeof options.y === 'number') {
+				this.hasY = true;
 				this._y = options.y;
+			} else {
+				this.hasY = !this.hasMatrix;
+				this._y = 0;
 			}
 			if (typeof options.sx === 'number') {
+				this.hasSx = true;
 				this._sx = options.sx;
+			} else {
+				this.hasSx = !this.hasMatrix;
+				this._sx = 1;
 			}
 			if (typeof options.sy === 'number') {
+				this.hasSy = true;
 				this._sy = options.sy;
+			} else {
+				this.hasSy = !this.hasMatrix;
+				this._sy = 1;
 			}
 			if (typeof options.rotation === 'number') {
+				this.hasRotation = true;
 				this._rotation = options.rotation;
-			}
-
-			if (this._matrix === undefined) {
-				this._x = (typeof this._x === 'number') ? this._x : 0;
-				this._y = (typeof this._y === 'number') ? this._y : 0;
-				this._sx = (typeof this._sx === 'number') ? this._sx : 1;
-				this._sy = (typeof this._sy === 'number') ? this._sy : 1;
-				this._rotation = (typeof this._rotation === 'number') ? this._rotation : 0;
+			} else {
+				this.hasRotation = !this.hasMatrix;
+				this._rotation = 0;
 			}
 		}
 	}
 
 	get sx () {
-		if (this._sx === undefined) {
+		if (!this.hasSx) {
+			this.hasSx = true;
 			this._sx = Math.sqrt(Math.pow(this._matrix[0], 2) + Math.pow(this._matrix[3], 2));
 		}
 
@@ -56,11 +95,12 @@ export default class Matrix {
 
 		this._sx = sx;
 
-		delete this._matrix;
+		this.hasMatrix = false;;
 	}
 
 	get sy () {
-		if (this._sy === undefined) {
+		if (!this.hasSy) {
+			this.hasSy = true;
 			this._sy = MathExtended.sign(this.determinant()) * Math.sqrt(Math.pow(this._matrix[1], 2) + Math.pow(this._matrix[4], 2));
 		}
 
@@ -75,7 +115,7 @@ export default class Matrix {
 
 		this._sy = sy;
 
-		delete this._matrix;
+		this.hasMatrix = false;;
 	}
 
 	set scale (scale) {
@@ -86,11 +126,12 @@ export default class Matrix {
 		this._sx = scale;
 		this._sy = scale;
 
-		delete this._matrix;
+		this.hasMatrix = false;;
 	}
 
 	get rotation () {
-		if (this._rotation === undefined) {
+		if (!this.hasRotation) {
+			this.hasRotation = true;
 			this._rotation = Math.atan2(-this._matrix[3], this._matrix[0]);
 		}
 
@@ -105,11 +146,12 @@ export default class Matrix {
 
 		this._rotation = rotation;
 
-		delete this._matrix;
+		this.hasMatrix = false;;
 	}
 
 	get x () {
-		if (this._x === undefined) {
+		if (!this.hasX) {
+			this.hasX = true;
 			this._x = this._matrix[2];
 		}
 
@@ -124,13 +166,14 @@ export default class Matrix {
 
 		this._x = x;
 
-		if (this._matrix !== undefined) {
+		if (this.hasMatrix) {
 			this._matrix[2] = x;
 		}
 	}
 
 	get y () {
-		if (this._y === undefined) {
+		if (!this.hasY) {
+			this.hasY = true;
 			this._y = this._matrix[5];
 		}
 
@@ -145,77 +188,85 @@ export default class Matrix {
 
 		this._y = y;
 
-		if (this._matrix !== undefined) {
+		if (this.hasMatrix) {
 			this._matrix[5] = y;
 		}
  	}
 
 	get matrix () {
-		if (this._matrix === undefined) {
-			let sin = Math.sin(this._rotation);
-			let cos = Math.cos(this._rotation)
+		if (!this.hasMatrix) {
+			this.hasMatrix = true;
+			const sin = Math.sin(this._rotation);
+			const cos = Math.cos(this._rotation)
 
-			this._matrix = [
+			this._matrix = new Float64Array([
 				this._sx * cos, this._sy * sin, this._x,
 				-this._sx * sin, this._sy * cos, this._y
-			];
+			]);
 		}
 
 		return this._matrix;
 	}
 
 	set matrix (m) {
+		this.hasMatrix = true;
 		this._matrix = m;
 
-		delete this._x;
-		delete this._y;
-		delete this._sx;
-		delete this._sy;
-		delete this._rotation;
+		this.hasX = false;
+		this.hasY = false;
+		this.hasSx = false;
+		this.hasSy = false;
+		this.hasRotation = false;
 	}
 
 	identity () {
-		this._matrix = [
+		this.hasMatrix = true;
+		this._matrix = new Float64Array([
 			1, 0, 0,
 			0, 1, 0
-		];
+		]);
 
+		this.hasX = true;
 		this._x = 0;
+		this.hasY = true;
 		this._y = 0;
+		this.hasSx = true;
 		this._sx = 1;
+		this.hasSy = true;
 		this._sy = 1;
+		this.hasRotation = true;
 		this._rotation = 0;
 
 		return this;
 	}
 
 	multiplyMatrix (m) {
-		let a = this.matrix;
-		let b = m.matrix;
+		const a = this.matrix;
+		const b = m.matrix;
 
-		return new Matrix([
+		return new Matrix(new Float64Array([
 			a[0]*b[0] + a[3]*b[1], a[1]*b[0] + a[4]*b[1], a[2]*b[0] + a[5]*b[1] + b[2],
 			a[0]*b[3] + a[3]*b[4], a[1]*b[3] + a[4]*b[4], a[2]*b[3] + a[5]*b[4] + b[5]
-		]);
+		]));
 	}
 
 	determinant () {
-		let m = this.matrix;
+		const m = this.matrix;
 		return 1 / (m[0]*m[4] - m[1]*m[3]);
 	}
 
 	inverseMatrix () {
-		let m = this.matrix;
-		let det = this.determinant();
+		const m = this.matrix;
+		const det = this.determinant();
 
-		return new Matrix([
+		return new Matrix(new Float64Array([
 			 det * m[4], -det * m[1],  det * (m[1]*m[5] - m[2]*m[4]),
 			-det * m[3],  det * m[0], -det * (m[0]*m[5] - m[2]*m[3])
-		]);
+		]));
 	}
 
 	translate (x, y) {
-		let matrix = this.clone();
+		const matrix = this.clone();
 		matrix.x += x;
 		matrix.y += y;
 
@@ -223,7 +274,7 @@ export default class Matrix {
 	}
 
 	normalize () {
-		let matrix = this.clone();
+		const matrix = this.clone();
 		matrix.x = 0;
 		matrix.y = 0;
 
@@ -254,7 +305,7 @@ export default class Matrix {
 	}
 
 	copyMatrix (matrix) {
-		this._matrix = matrix._matrix ? [...matrix._matrix] : undefined;
+		this._matrix = matrix._matrix ? new Float64Array([...matrix._matrix]) : undefined;
 		this._x = matrix._x;
 		this._y = matrix._y;
 		this._sx = matrix._sx;
@@ -264,7 +315,7 @@ export default class Matrix {
 		return this;
 	}
 	setMatrixContext (context) {
-		let m = this.matrix;
+		const m = this.matrix;
 		context.transform(m[0], m[3], m[1], m[4], m[2], m[5]);
 	}
 
@@ -276,13 +327,13 @@ export default class Matrix {
 
 	rotateAroundRelative (angle, center) {
 		if (angle !== 0) {
-			let before = center.applyMatrix(this);
+			const before = center.applyMatrix(this);
 
 			this.rotation = angle;
 
-			let after = center.applyMatrix(this);
+			const after = center.applyMatrix(this);
 
-			let offset = before.subtract(after);
+			const offset = before.subtract(after);
 
 			this.x += offset.x;
 			this.y += offset.y;
@@ -298,14 +349,14 @@ export default class Matrix {
 	}
 
 	scaleAroundRelative (sx, sy, center) {
-		let before = center.applyMatrix(this);
+		const before = center.applyMatrix(this);
 
 		this.sx = sx;
 		this.sy = sy;
 
-		let after = center.applyMatrix(this);
+		const after = center.applyMatrix(this);
 
-		let offset = before.subtract(after);
+		const offset = before.subtract(after);
 
 		this.x += offset.x;
 		this.y += offset.y;
