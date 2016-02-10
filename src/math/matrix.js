@@ -4,75 +4,65 @@ export default class Matrix {
 	constructor (options) {
 		if (options === undefined) {
 			this.identity();
+		} else if (options instanceof Array) {
+			this.hasMatrix = true;
+			this._matrix = options;
+
+			this.hasX = false;
+			this._x = 0;
+			this.hasY = false;
+			this._y = 0;
+			this.hasSx = false;
+			this._sx = 1;
+			this.hasSy = false;
+			this._sy = 1;
+			this.hasRotation = false;
+			this._rotation = 0;
 		} else {
-			if (options instanceof Array) {
-				options = new Float64Array(options);
-			}
-
-			if (options instanceof Float64Array) {
+			if (options.matrix instanceof Array) {
 				this.hasMatrix = true;
-				this._matrix = options;
-
-				this.hasX = false;
-				this._x = 0;
-				this.hasY = false;
-				this._y = 0;
-				this.hasSx = false;
-				this._sx = 1;
-				this.hasSy = false;
-				this._sy = 1;
-				this.hasRotation = false;
-				this._rotation = 0;
+				this._matrix = options.matrix;
 			} else {
-				if (options.matrix instanceof Array) {
-					options.matrix = new Float64Array(options.matrix);
-				}
-
-				if (options.matrix instanceof Float64Array) {
-					this.hasMatrix = true;
-					this._matrix = options.matrix;
-				} else {
-					this.hasMatrix = false;
-					this._matrix  = new Float64Array([
-						1, 0, 0,
-						0, 1, 0
-					]);
-				}
-				if (typeof options.x === 'number') {
-					this.hasX = true;
-					this._x = options.x;
-				} else {
-					this.hasX = !this.hasMatrix;
-					this._x = 0;
-				}
-				if (typeof options.y === 'number') {
-					this.hasY = true;
-					this._y = options.y;
-				} else {
-					this.hasY = !this.hasMatrix;
-					this._y = 0;
-				}
-				if (typeof options.sx === 'number') {
-					this.hasSx = true;
-					this._sx = options.sx;
-				} else {
-					this.hasSx = !this.hasMatrix;
-					this._sx = 1;
-				}
-				if (typeof options.sy === 'number') {
-					this.hasSy = true;
-					this._sy = options.sy;
-				} else {
-					this.hasSy = !this.hasMatrix;
-					this._sy = 1;
-				}
-				if (typeof options.rotation === 'number') {
-					this.hasRotation = true;
-					this._rotation = options.rotation;
-				} else {
-					this.hasRotation = !this.hasMatrix;
-					this._rotation = 0;
-				}
+				this.hasMatrix = false;
+				this._matrix  = [
+					1, 0, 0,
+					0, 1, 0
+				];
+			}
+			if (typeof options.x === 'number') {
+				this.hasX = true;
+				this._x = options.x;
+			} else {
+				this.hasX = !this.hasMatrix;
+				this._x = 0;
+			}
+			if (typeof options.y === 'number') {
+				this.hasY = true;
+				this._y = options.y;
+			} else {
+				this.hasY = !this.hasMatrix;
+				this._y = 0;
+			}
+			if (typeof options.sx === 'number') {
+				this.hasSx = true;
+				this._sx = options.sx;
+			} else {
+				this.hasSx = !this.hasMatrix;
+				this._sx = 1;
+			}
+			if (typeof options.sy === 'number') {
+				this.hasSy = true;
+				this._sy = options.sy;
+			} else {
+				this.hasSy = !this.hasMatrix;
+				this._sy = 1;
+			}
+			if (typeof options.rotation === 'number') {
+				this.hasRotation = true;
+				this._rotation = options.rotation;
+			} else {
+				this.hasRotation = !this.hasMatrix;
+				this._rotation = 0;
 			}
 		}
 	}
@@ -196,12 +186,12 @@ export default class Matrix {
 		if (!this.hasMatrix) {
 			this.hasMatrix = true;
 			const sin = Math.sin(this._rotation);
-			const cos = Math.cos(this._rotation)
+			const cos = Math.cos(this._rotation);
 
-			this._matrix = new Float64Array([
+			this._matrix = [
 				this._sx * cos, this._sy * sin, this._x,
 				-this._sx * sin, this._sy * cos, this._y
-			]);
+			];
 		}
 
 		return this._matrix;
@@ -220,10 +210,10 @@ export default class Matrix {
 
 	identity () {
 		this.hasMatrix = true;
-		this._matrix = new Float64Array([
+		this._matrix = [
 			1, 0, 0,
 			0, 1, 0
-		]);
+		];
 
 		this.hasX = true;
 		this._x = 0;
@@ -243,10 +233,10 @@ export default class Matrix {
 		const a = this.matrix;
 		const b = m.matrix;
 
-		return new Matrix(new Float64Array([
+		return new Matrix([
 			a[0]*b[0] + a[3]*b[1], a[1]*b[0] + a[4]*b[1], a[2]*b[0] + a[5]*b[1] + b[2],
 			a[0]*b[3] + a[3]*b[4], a[1]*b[3] + a[4]*b[4], a[2]*b[3] + a[5]*b[4] + b[5]
-		]));
+		]);
 	}
 
 	determinant () {
@@ -258,10 +248,10 @@ export default class Matrix {
 		const m = this.matrix;
 		const det = this.determinant();
 
-		return new Matrix(new Float64Array([
+		return new Matrix([
 			 det * m[4], -det * m[1],  det * (m[1]*m[5] - m[2]*m[4]),
 			-det * m[3],  det * m[0], -det * (m[0]*m[5] - m[2]*m[3])
-		]));
+		]);
 	}
 
 	translate (x, y) {
@@ -283,15 +273,7 @@ export default class Matrix {
 	equals (a) {
 		const b = this;
 
-		if (a._x !== undefined && b._x !== undefined) {
-			return (
-				a._x === b._x &&
-				a._y === b._y &&
-				a._sx === b._sx &&
-				a._sy === b._sy &&
-				a._rotation === b._rotation
-			);
-		} else {
+		if (a.hasMatrix && b.hasMatrix) {
 			return (
 				a.matrix[0] === b.matrix[0] &&
 				a.matrix[1] === b.matrix[1] &&
@@ -300,11 +282,19 @@ export default class Matrix {
 				a.matrix[4] === b.matrix[4] &&
 				a.matrix[5] === b.matrix[5]
 			);
+		} else {
+			return (
+				a.x === b.x &&
+				a.y === b.y &&
+				a.sx === b.sx &&
+				a.sy === b.sy &&
+				a.rotation === b.rotation
+			);
 		}
 	}
 
 	copyMatrix (matrix) {
-		this._matrix = matrix._matrix ? new Float64Array([...matrix._matrix]) : undefined;
+		this._matrix = matrix._matrix ? [...matrix._matrix] : undefined;
 		this._x = matrix._x;
 		this._y = matrix._y;
 		this._sx = matrix._sx;
@@ -365,7 +355,7 @@ export default class Matrix {
 
 	clone () {
 		return new Matrix({
-			matrix: this._matrix,
+			matrix: this.hasMatrix ? [...this._matrix] : undefined,
 			x: this._x,
 			y: this._y,
 			sx: this._sx,
