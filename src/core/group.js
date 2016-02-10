@@ -1,7 +1,7 @@
 import Surface from './surface.js';
 import Vector from '../math/vector.js';
 import Matrix from '../math/matrix.js';
-import {KeyLookUp} from './utils.js';
+import { KeyLookUp, cloneArray } from './utils.js';
 
 export default class Group extends Surface {
 	constructor (options = {}) {
@@ -69,119 +69,132 @@ export default class Group extends Surface {
 				case 'mouseup':
 				case 'mouseout':
 				case 'mousemove':
-					var button = event.button;
+					{
+						const button = event.button;
 
-					var offsetX = event.pageX - this.image.offsetLeft;
-					var offsetY = event.pageY - this.image.offsetTop;
+						const offsetX = event.pageX - this.image.offsetLeft;
+						const offsetY = event.pageY - this.image.offsetTop;
 
-					var x = this.image.width / this.image.clientWidth * offsetX;
-					var y = this.image.height / this.image.clientHeight * offsetY;
+						const x = this.image.width / this.image.clientWidth * offsetX;
+						const y = this.image.height / this.image.clientHeight * offsetY;
 
-					var position = new Vector(x, y);
+						const position = new Vector(x, y);
 
-					switch (event.type) {
-						case 'mousedown':
-							this.mouseDown({
-								position,
-								button
-							});
-							break;
+						switch (event.type) {
+							case 'mousedown':
+								this.mouseDown({
+									position,
+									button
+								});
+								break;
 
-						case 'mouseout':
-						case 'mouseup':
-							this.mouseUp({
-								position,
-								button
-							});
-							break;
+							case 'mouseout':
+							case 'mouseup':
+								this.mouseUp({
+									position,
+									button
+								});
+								break;
 
-						case 'mousemove':
-							this.mouseMove({
-								position,
-								button
-							});
-							break;
+							case 'mousemove':
+								this.mouseMove({
+									position,
+									button
+								});
+								break;
+						}
 					}
 					break;
 
 				case 'touchstart':
-					event.preventDefault();
+					{
+						event.preventDefault();
 
-					let identifiers = this.touches.map(({identifier}) => identifier);
+						const identifiers = this.touches.map(({identifier}) => identifier);
 
-					for (let touch of Array.from(event.touches)) {
-						// new finger?
-						var {identifier} = touch;
+						for (let i = 0; i < event.touches.length; i ++) {
+							const touch = event.touches[i];
+							// new finger?
+							var {identifier} = touch;
 
-						if (identifiers.indexOf(identifier) !== -1) {
-							continue;
-						}
-
-						// get location in canvas coordinate system
-						var offsetX = touch.pageX - this.image.offsetLeft;
-						var offsetY = touch.pageY - this.image.offsetTop;
-
-						var x = this.image.width / this.image.clientWidth * offsetX;
-						var y = this.image.height / this.image.clientHeight * offsetY;
-
-						// determine finger index
-						let finger = this.touches.length;
-						// if there is a "hole" in the finger indexes list it will use the first hole index
-						let fingers = this.touches.map(({finger}) => finger).sort();
-						for (let i = 0; i < fingers.length; i ++) {
-							if (i !== fingers[i]) {
-								finger = i;
-								break;
+							if (identifiers.indexOf(identifier) !== -1) {
+								continue;
 							}
-						}
 
-						this.mouseDown({
-							position: new Vector(x, y),
-							finger,
-							identifier
-						});
-					}
+							// get location in canvas coordinate system
+							const offsetX = touch.pageX - this.image.offsetLeft;
+							const offsetY = touch.pageY - this.image.offsetTop;
 
-					this.touchStart();
-					break;
+							const x = this.image.width / this.image.clientWidth * offsetX;
+							const y = this.image.height / this.image.clientHeight * offsetY;
 
-				case 'touchmove':
-					event.preventDefault();
+							// determine finger index
+							let finger = this.touches.length;
+							// if there is a "hole" in the finger indexes list it will use the first hole index
+							const fingers = this.touches.map(({finger}) => finger).sort();
+							for (let i = 0; i < fingers.length; i ++) {
+								if (i !== fingers[i]) {
+									finger = i;
+									break;
+								}
+							}
 
-					for (let touch of Array.from(event.touches)) {
-						let {identifier} = touch;
-
-						let offsetX = touch.pageX - this.image.offsetLeft;
-						let offsetY = touch.pageY - this.image.offsetTop;
-
-						let x = this.image.width / this.image.clientWidth * offsetX;
-						let y = this.image.height / this.image.clientHeight * offsetY;
-
-						let position = new Vector(x, y);
-
-						this.mouseMove({
-							position,
-							identifier
-						});
-					}
-
-					this.touchMove();
-					break;
-
-				case 'touchend':
-					event.preventDefault();
-
-					identifiers = Array.from(event.touches).map(({identifier}) => identifier);
-
-					for (let {identifier} of Array.from(this.touches)) {
-						if (identifiers.indexOf(identifier) === -1) {
-							this.mouseUp({
+							this.mouseDown({
+								position: new Vector(x, y),
+								finger,
 								identifier
 							});
 						}
-					}
 
-					this.touchEnd();
+						this.touchStart();
+					}
+					break;
+
+				case 'touchmove':
+					{
+						event.preventDefault();
+
+						for (let i = 0; i < event.touches.length; i ++) {
+							const touch = event.touches[i];
+
+							const {identifier} = touch;
+
+							const offsetX = touch.pageX - this.image.offsetLeft;
+							const offsetY = touch.pageY - this.image.offsetTop;
+
+							const x = this.image.width / this.image.clientWidth * offsetX;
+							const y = this.image.height / this.image.clientHeight * offsetY;
+
+							const position = new Vector(x, y);
+
+							this.mouseMove({
+								position,
+								identifier
+							});
+						}
+
+						this.touchMove();
+					}
+					break;
+
+				case 'touchend':
+					{
+						event.preventDefault();
+
+						const identifiers = Array.from(event.touches).map(({identifier}) => identifier);
+
+						for (let i = 0; i < this.touches.length; i ++) {
+							const identifier = this.touches[i].identifier;
+
+							if (identifiers.indexOf(identifier) === -1) {
+								this.mouseUp({
+									identifier
+								});
+							}
+						}
+
+						this.touchEnd();
+					}
 					break;
 
 				case 'keydown':
@@ -208,21 +221,23 @@ export default class Group extends Surface {
 					break;
 
 				case 'mousewheel':
-					event.preventDefault();
+					{
+						event.preventDefault();
 
-					if (this.useCanvas) {
-						const offsetX = event.pageX - this.image.offsetLeft;
-						const offsetY = event.pageY - this.image.offsetTop;
+						if (this.useCanvas) {
+							const offsetX = event.pageX - this.image.offsetLeft;
+							const offsetY = event.pageY - this.image.offsetTop;
 
-						const x = this.image.width / this.image.clientWidth * offsetX;
-						const y = this.image.height / this.image.clientHeight * offsetY;
+							const x = this.image.width / this.image.clientWidth * offsetX;
+							const y = this.image.height / this.image.clientHeight * offsetY;
 
-						const position = new Vector(x, y);
+							const position = new Vector(x, y);
 
-						this.mouseWheel({
-							delta: event.wheelDelta,
-							position
-						});
+							this.mouseWheel({
+								delta: event.wheelDelta,
+								position
+							});
+						}
 					}
 					break;
 
@@ -342,7 +357,7 @@ export default class Group extends Surface {
 			position
 		};
 
-		const objects = Array.from(this.objects);
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			const object = objects[i];
@@ -355,7 +370,7 @@ export default class Group extends Surface {
 	}
 
 	keyDown (key) {
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -368,7 +383,7 @@ export default class Group extends Surface {
 	}
 
 	keyUp (key) {
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -416,7 +431,7 @@ export default class Group extends Surface {
 			...mouseObject
 		};
 
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -458,7 +473,7 @@ export default class Group extends Surface {
 			...mouseObject
 		};
 
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -493,7 +508,8 @@ export default class Group extends Surface {
 			const lengthDelta = this.mouse.position.distanceTo(position);
 			this.mouse.position.copy(position);
 
-			for (let buttonIndex of this.mouse.down) {
+			for (let i = 0; i < this.mouse.down.length; i ++) {
+				const buttonIndex = this.mouse.down[i];
 				const button = this.mouse.buttons[buttonIndex];
 
 				button.length += lengthDelta;
@@ -521,7 +537,7 @@ export default class Group extends Surface {
 			...mouseObject
 		};
 
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -534,7 +550,7 @@ export default class Group extends Surface {
 	}
 
 	touchStart (touches) {
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -547,7 +563,7 @@ export default class Group extends Surface {
 	}
 
 	touchMove (touches) {
-		const objects = Array.from(this.objects);
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -560,7 +576,7 @@ export default class Group extends Surface {
 	}
 
 	touchEnd (touches) {
-		const objects = Array.from(this.objects);
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -573,7 +589,7 @@ export default class Group extends Surface {
 	}
 
 	step (deltaTime) {
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = 0; i < objects.length; i ++) {
 			let object = objects[i];
@@ -627,7 +643,7 @@ export default class Group extends Surface {
 			matrix = this;
 		}
 
-		let objects = Array.from(this.objects);
+		let objects = this.getObjects();
 
 		for (let i = 0; i < objects.length; i ++) {
 			let object = objects[i];
