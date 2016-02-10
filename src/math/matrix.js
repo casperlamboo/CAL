@@ -294,11 +294,17 @@ export default class Matrix {
 	}
 
 	copyMatrix (matrix) {
-		this._matrix = matrix._matrix ? [...matrix._matrix] : undefined;
+		this.hasMatrix = matrix.hasMatrix;
+		this._matrix = matrix.hasMatrix ? [...matrix._matrix] : undefined;
+		this.hasX = matrix.hasX;
 		this._x = matrix._x;
+		this.hasY = matrix.hasY;
 		this._y = matrix._y;
+		this.hasSx = matrix.hasSx;
 		this._sx = matrix._sx;
+		this.hasSy = matrix.hasSy;
 		this._sy = matrix._sy;
+		this.hasRotation = matrix.hasRotation;
 		this._rotation = matrix._rotation;
 
 		return this;
