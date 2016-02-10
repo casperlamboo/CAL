@@ -25,39 +25,39 @@ export default class Vector {
 	}
 
 	add (vector) {
-		let x = this.x + vector.x;
-		let y = this.y + vector.y;
+		const x = this.x + vector.x;
+		const y = this.y + vector.y;
 
 		return new Vector(x, y);
 	}
 
 	subtract (vector) {
-		let x = this.x - vector.x;
-		let y = this.y - vector.y;
+		const x = this.x - vector.x;
+		const y = this.y - vector.y;
 
 		return new Vector(x, y);
 	}
 
 	scale (scalar) {
-		let x = this.x * scalar;
-		let y = this.y * scalar;
+		const x = this.x * scalar;
+		const y = this.y * scalar;
 
 		return new Vector(x, y);
 	}
 
 	rotate (angle) {
-		let cos = Math.cos(angle);
-		let sin = Math.sin(angle);
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
 
-		let x = cos*this.x - sin*this.y;
-		let y = sin*this.x + cos*this.y;
+		const x = cos*this.x - sin*this.y;
+		const y = sin*this.x + cos*this.y;
 
 		return new Vector(x, y);
 	}
 
 	multiply (vector) {
-		let x = this.x * vector.x;
-		let y = this.y * vector.y;
+		const x = this.x * vector.x;
+		const y = this.y * vector.y;
 
 		return new Vector(x, y);
 	}
@@ -75,10 +75,10 @@ export default class Vector {
 	}
 
 	normalize () {
-		let length = this.length();
+		const length = this.length();
 
-		let x = this.x / length;
-		let y = this.y / length;
+		const x = this.x / length;
+		const y = this.y / length;
 
 		return new Vector(x, y);
 	}
@@ -96,17 +96,17 @@ export default class Vector {
 	}
 
 	round () {
-		let x = Math.round(this.x);
-		let y = Math.round(this.y);
+		const x = Math.round(this.x);
+		const y = Math.round(this.y);
 
 		return new Vector(x, y);
 	}
 
 	applyMatrix (matrix) {
-		let m = matrix.matrix;
+		const m = matrix.matrix;
 
-		let x = m[0]*this.x + m[1]*this.y + m[2];
-		let y = m[3]*this.x + m[4]*this.y + m[5];
+		const x = m[0]*this.x + m[1]*this.y + m[2];
+		const y = m[3]*this.x + m[4]*this.y + m[5];
 
 		return new Vector(x, y);
 	}
@@ -124,10 +124,10 @@ export default class Vector {
 	}
 
 	draw (context, x = 0, y = 0) {
-		let end = new Vector(this.x + x, this.y + y);
-		let arrowOrigin = new Vector(x, y).add(this.subtract(this.normalize().scale(10)));
-		let left = this.normal().normalize().scale(10).add(arrowOrigin);
-		let right = this.normal().normalize().scale(-10).add(arrowOrigin);
+		const end = new Vector(this.x + x, this.y + y);
+		const arrowOrigin = new Vector(x, y).add(this.subtract(this.normalize().scale(10)));
+		const left = this.normal().normalize().scale(10).add(arrowOrigin);
+		const right = this.normal().normalize().scale(-10).add(arrowOrigin);
 
 		context.beginPath();
 		context.moveTo(x, y);
