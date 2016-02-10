@@ -370,7 +370,7 @@ export default class Group extends Surface {
 	}
 
 	keyDown (key) {
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -383,7 +383,7 @@ export default class Group extends Surface {
 	}
 
 	keyUp (key) {
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -431,7 +431,7 @@ export default class Group extends Surface {
 			...mouseObject
 		};
 
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -473,7 +473,7 @@ export default class Group extends Surface {
 			...mouseObject
 		};
 
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -537,7 +537,7 @@ export default class Group extends Surface {
 			...mouseObject
 		};
 
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -550,7 +550,7 @@ export default class Group extends Surface {
 	}
 
 	touchStart (touches) {
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
@@ -589,7 +589,7 @@ export default class Group extends Surface {
 	}
 
 	step (deltaTime) {
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = 0; i < objects.length; i ++) {
 			let object = objects[i];
@@ -643,7 +643,7 @@ export default class Group extends Surface {
 			matrix = this;
 		}
 
-		let objects = this.getObjects();
+		const objects = cloneArray(this.objects);
 
 		for (let i = 0; i < objects.length; i ++) {
 			let object = objects[i];
