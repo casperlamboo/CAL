@@ -186,9 +186,10 @@ export default class Group extends Surface {
 						event.preventDefault();
 
 						const identifiers = Array.from(event.touches).map(({identifier}) => identifier);
+						const touches = cloneArray(this.touches);
 
-						for (let i = 0; i < this.touches.length; i ++) {
-							const identifier = this.touches[i].identifier;
+						for (let index = 0; index < touches.length; index ++) {
+							const identifier = touches[index].identifier;
 
 							if (identifiers.indexOf(identifier) === -1) {
 								this.mouseUp({
@@ -451,16 +452,16 @@ export default class Group extends Surface {
 		const matrix = this.inverseMatrix();
 		const {button, identifier} = mouse;
 
-		let mouseObject, index, position;
+		const identifiers = this.touches.map(({identifier}) => identifier);
+		const index = identifiers.indexOf(identifier);
+
+		let mouseObject, position;
 
 		if (button !== undefined) {
 			mouseObject = this.mouse.buttons[button];
 			position = this.mouse.position;
 		}
 		else if (identifier !== undefined) {
-			const identifiers = this.touches.map(({identifier}) => identifier);
-			index = identifiers.indexOf(identifier);
-
 			mouseObject = this.touches[index];
 			position = this.touches[index].position;
 		}
@@ -474,6 +475,7 @@ export default class Group extends Surface {
 		mouse = {
 			position,
 			button,
+			index,
 			...mouseObject
 		};
 
