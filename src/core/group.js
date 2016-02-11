@@ -509,7 +509,6 @@ export default class Group extends Surface {
 		let mouseObject;
 		if (button !== undefined) {
 			if (this.richEvents) {
-				console.log(this.richEvents);
 				const lengthDelta = this.mouse.position.distanceTo(position);
 
 				for (let i = 0; i < this.mouse.down.length; i ++) {
