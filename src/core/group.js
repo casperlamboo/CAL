@@ -522,18 +522,15 @@ export default class Group extends Surface {
 
 			this.mouse.position.copy(position);
 			mouseObject = this.mouse.buttons[button];
-		} else if (identifier !== undefined) {
+		} else if (index !== undefined) {
 			if (this.richEvents) {
-				mouseObject = this.touches[index];
+				const lengthDelta = mouseObject.position.distanceTo(position);
 
-				if (this.richEvents) {
-					const lengthDelta = mouseObject.position.distanceTo(position);
-
-					mouseObject.length += lengthDelta;
-					mouseObject.delta.copy(position.subtract(mouseObject.start));
-				}
-				mouseObject.position.copy(position);
+				mouseObject.length += lengthDelta;
+				mouseObject.delta.copy(position.subtract(mouseObject.start));
 			}
+			mouseObject = this.touches[index];
+			mouseObject.position.copy(position);
 		}
 
 		mouse = { position, button, index, ...mouseObject };
