@@ -10,7 +10,8 @@ export default class Group extends Surface {
 		let {
 			useCanvas = true,
 			autoClearCanvas = false,
-			autoDrawCanvas = false
+			autoDrawCanvas = false,
+			richEvents = false
 		} = options;
 
 		this.active = true;
@@ -23,6 +24,7 @@ export default class Group extends Surface {
 		this.drawCanvas = true;
 		this.autoClearCanvas = autoClearCanvas;
 		this.autoDrawCanvas = autoDrawCanvas;
+		this.richEvents = richEvents;
 
 		this.mouse = {
 			position: new Vector(),
@@ -157,7 +159,9 @@ export default class Group extends Surface {
 						for (let i = 0; i < event.touches.length; i ++) {
 							const touch = event.touches[i];
 
-							const {identifier} = touch;
+							const { identifier } = touch;
+							const identifiers = this.touches.map(({identifier}) => identifier);
+							const index = identifiers.indexOf(identifier);
 
 							const offsetX = touch.pageX - this.image.offsetLeft;
 							const offsetY = touch.pageY - this.image.offsetTop;
@@ -169,7 +173,7 @@ export default class Group extends Surface {
 
 							this.mouseMove({
 								position,
-								identifier
+								index
 							});
 						}
 
@@ -500,47 +504,45 @@ export default class Group extends Surface {
 	mouseMove (mouse) {
 		const matrix = this.inverseMatrix();
 		const position = mouse.position.applyMatrix(matrix);
-		const {button, identifier} = mouse;
+		const {button, index} = mouse;
 
 		let mouseObject;
-
 		if (button !== undefined) {
-			const lengthDelta = this.mouse.position.distanceTo(position);
-			this.mouse.position.copy(position);
+			if (this.richEvents) {
+				console.log(this.richEvents);
+				const lengthDelta = this.mouse.position.distanceTo(position);
 
-			for (let i = 0; i < this.mouse.down.length; i ++) {
-				const buttonIndex = this.mouse.down[i];
-				const button = this.mouse.buttons[buttonIndex];
+				for (let i = 0; i < this.mouse.down.length; i ++) {
+					const buttonIndex = this.mouse.down[i];
+					const button = this.mouse.buttons[buttonIndex];
 
-				button.length += lengthDelta;
-				button.delta.copy(position.subtract(button.start));
+					button.length += lengthDelta;
+					button.delta.copy(position.subtract(button.start));
+				}
 			}
 
+			this.mouse.position.copy(position);
 			mouseObject = this.mouse.buttons[button];
+		} else if (identifier !== undefined) {
+			if (this.richEvents) {
+				mouseObject = this.touches[index];
+
+				if (this.richEvents) {
+					const lengthDelta = mouseObject.position.distanceTo(position);
+
+					mouseObject.length += lengthDelta;
+					mouseObject.delta.copy(position.subtract(mouseObject.start));
+				}
+				mouseObject.position.copy(position);
+			}
 		}
-		else if (identifier !== undefined) {
-			const identifiers = this.touches.map(({identifier}) => identifier);
-			const index = identifiers.indexOf(identifier);
 
-			mouseObject = this.touches[index];
-
-			const lengthDelta = mouseObject.position.distanceTo(position);
-
-			mouseObject.length += lengthDelta;
-			mouseObject.position.copy(position);
-			mouseObject.delta.copy(position.subtract(mouseObject.start));
-		}
-
-		mouse = {
-			position,
-			button,
-			...mouseObject
-		};
+		mouse = { position, button, index, ...mouseObject };
 
 		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
-			let object = objects[i];
+			const object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseMove !== undefined) {
 				if (object.mouseMove(mouse, this)) {
 					break;
