@@ -5,6 +5,7 @@
       "lib": "src"
     },
     "dependencies": {
+      "casperlamboo/Math": "github:casperlamboo/Math@master",
       "casperlamboo/eventdispatcher": "github:casperlamboo/eventdispatcher@master"
     },
     "devDependencies": {

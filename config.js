@@ -15,6 +15,7 @@ System.config({
   map: {
     "babel": "npm:babel-core@5.8.21",
     "babel-runtime": "npm:babel-runtime@5.8.20",
+    "casperlamboo/Math": "github:casperlamboo/Math@master",
     "casperlamboo/eventdispatcher": "github:casperlamboo/eventdispatcher@master",
     "core-js": "npm:core-js@0.9.18",
     "github:jspm/nodelibs-process@0.1.1": {
