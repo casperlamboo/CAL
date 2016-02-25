@@ -47,7 +47,6 @@ class mouseHandler {
 
 		scene.clearCanvas = true;
 		scene.drawCanvas = true;
-
 	}
 }
 

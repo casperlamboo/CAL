@@ -1,13 +1,14 @@
-import Matrix from '../math/matrix.js';
-import Vector from '../math/vector.js';
+import { Vector, Matrix } from 'casperlamboo/Math';
+
+const POSITION = new Vector();
 
 export default class Draw extends Matrix {
 	constructor (centerX = 0, centerY = 0, numberWidth = 1, numberHeight = 1, options = {}) {
 		super(options);
 
 		let {
-			visible = true, 
-			depth = 0, 
+			visible = true,
+			depth = 0,
 			alpha = 1
 		} = options;
 
@@ -27,15 +28,15 @@ export default class Draw extends Matrix {
 	}
 
 	getBoundingBox (applyMatrix) {
-		let top = -this.centerY;
-		let left = -this.centerX;
-		let right = this.width - this.centerX;
-		let bottom = this.height - this.centerY;
+		const top = -this.centerY;
+		const left = -this.centerX;
+		const right = this.width - this.centerX;
+		const bottom = this.height - this.centerY;
 
-		let points = [
-			new Vector(left, top), 
-			new Vector(right, top), 
-			new Vector(left, bottom), 
+		const points = [
+			new Vector(left, top),
+			new Vector(right, top),
+			new Vector(left, bottom),
 			new Vector(right, bottom)
 		];
 
@@ -45,7 +46,7 @@ export default class Draw extends Matrix {
 		let maxY = -Infinity;
 
 		for (let i = 0; i < points.length; i ++) {
-			let point = applyMatrix ? points[i].applyMatrix(this) : points[i];
+			const point = applyMatrix ? POSITION.copy(points[i]).applyMatrix(this) : points[i];
 
 			minX = (point.x < minX) ? point.x : minX;
 			minY = (point.y < minY) ? point.y : minY;
@@ -54,23 +55,23 @@ export default class Draw extends Matrix {
 		}
 
 		return {
-			top: minY, 
-			left: minX, 
-			bottom: maxY, 
-			right: maxX, 
-			width: maxX - minX, 
+			top: minY,
+			left: minX,
+			bottom: maxY,
+			right: maxX,
+			width: maxX - minX,
 			height: maxY - minY
 		};
 	}
 
 	draw (context, matrix = this) {
-
 		context.save();
+
 		matrix.setMatrixContext(context);
 		context.globalAlpha = this.alpha;
-		
+
 		this.drawSimple(context, this.index, 0, 0);
-		
+
 		context.restore();
 
 		return this;
@@ -169,7 +170,7 @@ export default class Draw extends Matrix {
 
 		context.drawImage(this.image, sx, sy, this.width, this.height, offsetX, offsetY, this.width * scaleX, this.height * scaleY);
 
-		return this;	
+		return this;
 	}
 
 	drawContain (context, index, x, y, width, height) {

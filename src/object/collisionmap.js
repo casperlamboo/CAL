@@ -1,12 +1,16 @@
-import Matrix from '../math/matrix.js';
+import { Matrix, Vector } from 'casperlamboo/Math';
 import Surface from '../core/surface.js';
 import Shape from '../object/shape.js';
 import Color from '../math/color.js';
 
+const INVERSE_MATRIX = new Matrix();
+const MATRIX = new Matrix();
+const POSITION = new Vector();
+
 export default class CollsionMap extends Matrix {
 
-	createFromImage (image, {applyMatrix = false}) {
-		let boundingBox = image.getBoundingBox(applyMatrix);
+	createFromImage (image, { applyMatrix = false }) {
+		const boundingBox = image.getBoundingBox(applyMatrix);
 
 		this.width = Math.ceil(boundingBox.width);
 		this.height = Math.ceil(boundingBox.height);
@@ -44,15 +48,15 @@ export default class CollsionMap extends Matrix {
 	}
 
 	_applyMap (image, applyMatrix) {
-		let surface = new Surface({
+		const surface = new Surface({
 			width: this.width,
 			height: this.height
 		});
 
-		let matrix = applyMatrix ? image.multiplyMatrix(this) : this;
+		const matrix = applyMatrix ? MATRIX.copyMatrix(image).multiplyMatrix(this) : this;
 		image.draw(surface.context, matrix);
 
-		let imageData = surface.getImageData();
+		const imageData = surface.getImageData();
 
 		this.map = [];
 		for (let index = 3; index < imageData.data.length; index += 4) {
@@ -63,8 +67,8 @@ export default class CollsionMap extends Matrix {
 	}
 
 	hit (vector, matrix) {
-		matrix = matrix ? matrix.inverseMatrix().multiplyMatrix(this) : this;
-		vector = vector.applyMatrix(matrix).round();
+		matrix = matrix ? INVERSE_MATRIX.copy(matrix).inverseMatrix().multiplyMatrix(this) : this;
+		vector = POSITION.copy(vector).applyMatrix(matrix).round();
 
 		if (vector.x < 0 || vector.y < 0 || vector.x >= this.width || vector.y >= this.height) {
 			return false;

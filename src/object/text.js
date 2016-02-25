@@ -1,4 +1,4 @@
-import Matrix from '../math/matrix.js';
+import { Matrix } from 'casperlamboo/Math';
 import Color from '../math/color';
 
 export default class Text extends Matrix {
@@ -6,19 +6,19 @@ export default class Text extends Matrix {
 		super(options);
 
 		let {
-			visible = true, 
-			active = true, 
-			depth = 0, 
-			text = '', 
-			style = 'normal', 
-			variant = 'normal', 
-			weight = 'normal', 
-			size = 12, 
-			font = 'Arial', 
-			align = 'left', 
-			baseline = 'bottom', 
-			textAlign = 'left', 
-			color = new Color(), 
+			visible = true,
+			active = true,
+			depth = 0,
+			text = '',
+			style = 'normal',
+			variant = 'normal',
+			weight = 'normal',
+			size = 12,
+			font = 'Arial',
+			align = 'left',
+			baseline = 'bottom',
+			textAlign = 'left',
+			color = new Color(),
 			alpha = 'number'
 		} = options;
 
@@ -51,9 +51,9 @@ export default class Text extends Matrix {
 
 		context.textAlign = this.align;
 		context.textBaseline = this.baseline;
-		
+
 		this.color.setContext(context);
-		
+
 		context.fillText(text, x, y);
 	}
 
@@ -72,17 +72,17 @@ export default class Text extends Matrix {
 		matrix.setMatrixContext(context);
 
 		this.drawText(context, this.text, 0, 0);
-		
+
 		context.restore();
 	}
 
 	clone () {
 		return new Text({
-			style, 
-			variant, 
-			weight, 
-			size, 
-			font, 
+			style,
+			variant,
+			weight,
+			size,
+			font,
 			color: this.color.clone()
 		});
 	}

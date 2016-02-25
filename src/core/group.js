@@ -1,7 +1,10 @@
 import Surface from './surface.js';
-import Vector from '../math/vector.js';
-import Matrix from '../math/matrix.js';
+import { Vector, Matrix } from 'casperlamboo/Math';
 import { KeyLookUp, cloneArray } from './utils.js';
+
+const POSITION = new Vector();
+const INVERSE_MATRIX = new Matrix();
+const MATRIX = new Matrix();
 
 export default class Group extends Surface {
 	constructor (options = {}) {
@@ -80,12 +83,12 @@ export default class Group extends Surface {
 						const x = this.image.width / this.image.clientWidth * offsetX;
 						const y = this.image.height / this.image.clientHeight * offsetY;
 
-						const position = new Vector(x, y);
+						POSITION.set(x, y);
 
 						switch (event.type) {
 							case 'mousedown':
 								this.mouseDown({
-									position,
+									position: POSITION,
 									button
 								});
 								break;
@@ -93,14 +96,14 @@ export default class Group extends Surface {
 							case 'mouseout':
 							case 'mouseup':
 								this.mouseUp({
-									position,
+									position: POSITION,
 									button
 								});
 								break;
 
 							case 'mousemove':
 								this.mouseMove({
-									position,
+									position: POSITION,
 									button
 								});
 								break;
@@ -130,6 +133,8 @@ export default class Group extends Surface {
 							const x = this.image.width / this.image.clientWidth * offsetX;
 							const y = this.image.height / this.image.clientHeight * offsetY;
 
+							POSITION.set(x, y);
+
 							// determine finger index
 							let finger = this.touches.length;
 							// if there is a "hole" in the finger indexes list it will use the first hole index
@@ -142,7 +147,7 @@ export default class Group extends Surface {
 							}
 
 							this.mouseDown({
-								position: new Vector(x, y),
+								position: POSITION,
 								finger,
 								identifier
 							});
@@ -169,10 +174,10 @@ export default class Group extends Surface {
 							const x = this.image.width / this.image.clientWidth * offsetX;
 							const y = this.image.height / this.image.clientHeight * offsetY;
 
-							const position = new Vector(x, y);
+							POSITION.set(x, y);
 
 							this.mouseMove({
-								position,
+								position: POSITION,
 								index
 							});
 						}
@@ -230,17 +235,8 @@ export default class Group extends Surface {
 						event.preventDefault();
 
 						if (this.useCanvas) {
-							const offsetX = event.pageX - this.image.offsetLeft;
-							const offsetY = event.pageY - this.image.offsetTop;
-
-							const x = this.image.width / this.image.clientWidth * offsetX;
-							const y = this.image.height / this.image.clientHeight * offsetY;
-
-							const position = new Vector(x, y);
-
 							this.mouseWheel({
-								delta: event.wheelDelta,
-								position
+								delta: event.wheelDelta
 							});
 						}
 					}
@@ -290,27 +286,17 @@ export default class Group extends Surface {
 	}
 
 	setCanvas (canvas) {
-		if (this.image instanceof Node) {
-			this._removeEventListeners();
-			var imageData = this.context.getImageData(0, 0, this.width, this.height);
-			this.clear();
-		}
-
 		super.setCanvas(canvas);
 		this.clear();
 
 		this._addEventsListeners();
-
-		if (imageData !== undefined) {
-			this.context.putImageData(imageData, 0, 0);
-		}
 
 		return this;
 	}
 
 	add (...objects) {
 		for (let i = 0; i < objects.length; i ++) {
-			let object = objects[i];
+			const object = objects[i];
 			if (this.objects.indexOf(object) === -1) {
 				object.parent = this;
 				this.objects.push(object);
@@ -329,9 +315,9 @@ export default class Group extends Surface {
 
 	remove (...objects) {
 		for (let i = 0; i < objects.length; i ++) {
-			let object = objects[i];
+			const object = objects[i];
 
-			let index = this.objects.indexOf(object);
+			const index = this.objects.indexOf(object);
 			if (index === -1) {
 				continue;
 			}
@@ -355,7 +341,7 @@ export default class Group extends Surface {
 
 	mouseWheel (wheel) {
 		const matrix = this.inverseMatrix();
-		const position = wheel.position.applyMatrix(matrix);
+		const position = this.mouse.position;
 
 		wheel = {
 			...wheel,
@@ -401,47 +387,39 @@ export default class Group extends Surface {
 	}
 
 	mouseDown (mouse) {
-		const matrix = this.inverseMatrix();
-		const position = mouse.position.applyMatrix(matrix);
-		const {button, finger, identifier} = mouse;
+		INVERSE_MATRIX.copyMatrix(this).inverseMatrix();
 
+		const { button, finger, identifier } = mouse;
 		let mouseObject;
 
 		if (button !== undefined) {
-			this.mouse.position.copy(position);
 			this.mouse.down.push(mouse.button);
+			const position = this.mouse.position;
+			this.mouse.buttons[button].down = true;
 
-			mouseObject = this.mouse.buttons[button];
-		}
-		else if (finger !== undefined) {
+			mouseObject = { position, button, ...this.mouse.buttons[button] };
+		} else if (finger !== undefined) {
 			mouseObject = {
-				position,
+				position: new Vector(),
 				start: new Vector(),
 				delta: new Vector(),
 				finger,
+				down: true,
 				identifier
 			};
-
-			this.touches.push(mouseObject);
 		}
 
-		mouseObject.start.copy(position);
+		mouseObject.position.copy(mouse.position).applyMatrix(INVERSE_MATRIX);
+		mouseObject.start.copy(mouseObject.position);
 		mouseObject.delta.identity();
 		mouseObject.length = 0;
-		mouseObject.down = true;
-
-		mouse = {
-			position,
-			button,
-			...mouseObject
-		};
 
 		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseDown !== undefined) {
-				if (object.mouseDown(mouse, this)) {
+				if (object.mouseDown(mouseObject, this)) {
 					break;
 				}
 			}
@@ -449,42 +427,27 @@ export default class Group extends Surface {
 	}
 
 	mouseUp (mouse) {
-		const matrix = this.inverseMatrix();
-		const {button, identifier} = mouse;
+		const { button, identifier } = mouse;
 
-		const identifiers = this.touches.map(({identifier}) => identifier);
-		const index = identifiers.indexOf(identifier);
-
-		let mouseObject, position;
+		let mouseObject;
+		let index;
 
 		if (button !== undefined) {
-			mouseObject = this.mouse.buttons[button];
-			position = this.mouse.position;
-		}
-		else if (identifier !== undefined) {
+			this.mouse.buttons[button].down = false;
+			mouseObject = { position: this.mouse.position, button, ...this.mouse.buttons[button] };
+		} else if (identifier !== undefined) {
+			const identifiers = this.touches.map(({identifier}) => identifier);
+			index = identifiers.indexOf(identifier);
+
 			mouseObject = this.touches[index];
-			position = this.touches[index].position;
 		}
-
-		if (!mouseObject.down) {
-			return;
-		}
-
-		mouseObject.down = false;
-
-		mouse = {
-			position,
-			button,
-			index,
-			...mouseObject
-		};
 
 		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			let object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseUp !== undefined) {
-				if (object.mouseUp(mouse, this)) {
+				if (object.mouseUp(mouseObject, this)) {
 					break;
 				}
 			}
@@ -497,52 +460,49 @@ export default class Group extends Surface {
 			this.mouse.buttons[button].start.identity();
 			this.mouse.buttons[button].delta.identity();
 			this.mouse.buttons[button].length = 0;
-		}
-		else if (identifier !== undefined) {
+		} else if (identifier !== undefined) {
 			this.touches.splice(index, 1);
 		}
 	}
 
 	mouseMove (mouse) {
-		const matrix = this.inverseMatrix();
-		const position = mouse.position.applyMatrix(matrix);
-		const {button, index} = mouse;
+		INVERSE_MATRIX.copyMatrix(this).inverseMatrix();
+
+		const { button, index } = mouse;
 
 		let mouseObject;
 		if (button !== undefined) {
-			if (this.richEvents) {
-				const lengthDelta = this.mouse.position.distanceTo(position);
 
-				for (let i = 0; i < this.mouse.down.length; i ++) {
-					const buttonIndex = this.mouse.down[i];
-					const button = this.mouse.buttons[buttonIndex];
+			// if (this.richEvents) {
+			// 	const lengthDelta = this.mouse.position.distanceTo(position);
+			//
+			// 	for (let i = 0; i < this.mouse.down.length; i ++) {
+			// 		const buttonIndex = this.mouse.down[i];
+			// 		const button = this.mouse.buttons[buttonIndex];
+			//
+			// 		button.length += lengthDelta;
+			// 		button.delta.copy(this.mouse.position.subtract(button.start));
+			// 	}
+			// }
 
-					button.length += lengthDelta;
-					button.delta.copy(position.subtract(button.start));
-				}
-			}
-
-			this.mouse.position.copy(position);
-			mouseObject = this.mouse.buttons[button];
+			mouseObject = { position: this.mouse.position, button, ...this.mouse.buttons[button] };
 		} else if (index !== undefined) {
-			if (this.richEvents) {
-				const lengthDelta = mouseObject.position.distanceTo(position);
-
-				mouseObject.length += lengthDelta;
-				mouseObject.delta.copy(position.subtract(mouseObject.start));
-			}
-			mouseObject = this.touches[index];
-			mouseObject.position.copy(position);
+			// if (this.richEvents) {
+			// 	const lengthDelta = mouseObject.position.distanceTo(position);
+			//
+			// 	mouseObject.length += lengthDelta;
+			// 	mouseObject.delta.copy(position.subtract(mouseObject.start));
+			// }
+			mouseObject = { index, ...this.touches[index] };
 		}
-
-		mouse = { position, button, index, ...mouseObject };
+		mouseObject.position.copy(mouse.position).applyMatrix(INVERSE_MATRIX);
 
 		const objects = cloneArray(this.objects);
 
 		for (let i = objects.length - 1; i >= 0; i --) {
 			const object = objects[i];
 			if (object.useCanvas !== true && object.active && object.mouseMove !== undefined) {
-				if (object.mouseMove(mouse, this)) {
+				if (object.mouseMove(mouseObject, this)) {
 					break;
 				}
 			}
@@ -650,7 +610,7 @@ export default class Group extends Surface {
 
 			if (/*object.useCanvas !== true && */object.visible && object.draw !== undefined) {
 				if (object.useCanvas !== true && object instanceof Matrix) {
-					object.draw(context, object.multiplyMatrix(matrix));
+					object.draw(context, MATRIX.copyMatrix(object).multiplyMatrix(matrix));
 				}
 				else {
 					object.draw(context, matrix);

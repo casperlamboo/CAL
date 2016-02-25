@@ -1,4 +1,4 @@
-import {KeyLookUp} from '../core/utils.js';
+import { KeyLookUp } from '../core/utils.js';
 
 export default class KeyListener {
 	constructor (actions = {}, active = true) {
@@ -50,7 +50,7 @@ export default class KeyListener {
 		return this;
 	}
 
-	keyDown ({keyCode}) {	
+	keyDown ({keyCode}) {
 		if (this.actions[keyCode]) {
 			let actions = this.actions[keyCode];
 
