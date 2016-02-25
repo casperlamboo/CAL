@@ -1,9 +1,8 @@
-import { Matrix as matrix, Vector as vector } from 'casperlamboo/Math';
+import { Matrix as matrix, Vector as vector, Color as color } from 'casperlamboo/Math';
 import draw from './core/draw.js';
 import group from './core/group.js';
 import surface from './core/surface.js';
 import * as utils from './core/utils.js';
-import color from './math/color.js';
 import image from './object/image.js';
 import keyListener from './object/keylistener.js';
 import loader from './object/loader.js';

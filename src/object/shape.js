@@ -1,4 +1,4 @@
-import Color from '../math/color.js';
+import { Color } from 'casperlamboo/Math';
 import { MathExtended, Vector, Matrix } from 'casperlamboo/Math';
 
 const POINT = new Vector();

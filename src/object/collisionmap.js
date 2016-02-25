@@ -1,7 +1,7 @@
 import { Matrix, Vector } from 'casperlamboo/Math';
 import Surface from '../core/surface.js';
 import Shape from '../object/shape.js';
-import Color from '../math/color.js';
+import { Color } from 'casperlamboo/Math';
 
 const INVERSE_MATRIX = new Matrix();
 const MATRIX = new Matrix();
