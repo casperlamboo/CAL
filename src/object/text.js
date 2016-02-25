@@ -1,5 +1,4 @@
-import { Matrix } from 'casperlamboo/Math';
-import Color from '../math/color';
+import { Matrix, Color } from 'casperlamboo/Math';
 
 export default class Text extends Matrix {
 	constructor (options = {}) {
