@@ -360,14 +360,16 @@ export default class Matrix {
 	}
 
 	clone () {
-		return new Matrix({
-			matrix: this.hasMatrix ? [...this._matrix] : undefined,
-			x: this._x,
-			y: this._y,
-			sx: this._sx,
-			sy: this._sy,
-			rotation: this._rotation
-		});
+		const options = {};
+		
+		if (this.hasMatrix) options.matrix = [...this._matrix];
+		if (this.hasX) options.x = this._x;
+		if (this.hasY) options.y = this._y;
+		if (this.hasSx) options.sx = this._sx;
+		if (this.hasSy) options.sy = this._sy;
+		if (this.hasRotation) options.rotation = this._rotation;
+
+		return new Matrix(options);
 	}
 
 	toJSON () {
