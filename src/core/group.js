@@ -575,6 +575,14 @@ export default class Group extends Surface {
 		}
 	}
 
+	getScreenMatrix() {
+		if (this.parent) {
+			return this.multiplyMatrix(this.parent.getScreenMatrix());
+		} else {
+			return this;
+		}
+	}
+
 	touchEnd (touches) {
 		const objects = cloneArray(this.objects);
 
