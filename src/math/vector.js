@@ -154,4 +154,8 @@ export default class Vector {
 		this.copy(json);
 		return this;
 	}
+	
+	toString () {
+		return `${Math.round(this.x*100)/100}x${Math.round(this.y*100)/100}`;
+	}
 };
