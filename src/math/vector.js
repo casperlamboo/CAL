@@ -156,6 +156,6 @@ export default class Vector {
 	}
 	
 	toString () {
-		return `${Math.round(this.x*100)/100}x${Math.round(this.y*100)/100}`;
+		return `${this.x.toFixed(2)}x${this.y.toFixed(2)}`;
 	}
 };
