@@ -11,7 +11,8 @@ export default class Group extends Surface {
 			useCanvas = true,
 			autoClearCanvas = false,
 			autoDrawCanvas = false,
-			richEvents = false
+			richEvents = false,
+			drawWhenBlurred = false
 		} = options;
 
 		this.active = true;
@@ -25,6 +26,7 @@ export default class Group extends Surface {
 		this.autoClearCanvas = autoClearCanvas;
 		this.autoDrawCanvas = autoDrawCanvas;
 		this.richEvents = richEvents;
+		this.drawWhenBlurred = drawWhenBlurred;
 
 		this.mouse = {
 			position: new Vector(),
@@ -628,7 +630,7 @@ export default class Group extends Surface {
 	}
 
 	cycle () {
-		if (this.focus) {
+		if (this.drawWhenBlurred || this.focus) {
 			let currentTime = new Date().getTime();
 			let deltaTime = currentTime - this._lastTime;
 			this._lastTime = currentTime;
