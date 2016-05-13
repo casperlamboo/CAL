@@ -224,6 +224,8 @@ export default class Shape extends Matrix {
 	}
 
 	setContext (context, matrix = this) {
+		if (this.points.length === 0) return;
+		
 		context.beginPath();
 
 		let currentPoint = this.points[0].applyMatrix(matrix);
@@ -248,6 +250,8 @@ export default class Shape extends Matrix {
 	}
 
 	fill (context, matrix) {
+		if (this.points.length === 0) return;
+
 		this.setContext(context, matrix);
 
 		this.shapeColor.setFill(context);
@@ -258,6 +262,8 @@ export default class Shape extends Matrix {
 	}
 
 	stroke (context, matrix) {
+		if (this.points.length === 0) return;
+
 		this.setContext(context, matrix);
 
 		context.lineColor = this.lineColor;
@@ -273,6 +279,8 @@ export default class Shape extends Matrix {
 	}
 
 	draw (context, matrix) {
+		if (this.points.length === 0) return;
+
 		this.setContext(context, matrix);
 
 		if (this.shadow) {
