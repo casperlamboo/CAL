@@ -1,22 +1,14 @@
 import * as CAL from 'src/index.js';
 
-let canvas = new CAL.Matrix({
-	rotation: -1, 
-	sx: 3, 
-	sy: -0.1, 
-	x: 100, 
-	y: 200
-});
-
-let group = new CAL.Group({
+let group = new CAL.GroupInteractive({
 	canvas: document.getElementById('CAL')
 });
 
 let collisionMapImage;
 
 let image = new CAL.Image('img/hourglass.png', 0, 0, 1, 1, {
-	x: 450, 
-	y: 50, 
+	x: 450,
+	y: 50,
 	alpha: 0.5
 }).load(() => {
 	group.drawCanvas = true;
@@ -29,19 +21,19 @@ group.add(image);
 
 let shape = new CAL.Shape({
 	points: [
-		new CAL.Vector(100, 100), 
-		new CAL.Vector(200, 200), 
-		new CAL.Vector(300, 100), 
-		new CAL.Vector(300, -100), 
+		new CAL.Vector(100, 100),
+		new CAL.Vector(200, 200),
+		new CAL.Vector(300, 100),
+		new CAL.Vector(300, -100),
 		new CAL.Vector(250, -200)
-	], 
-	lineWidth: 10, 
-	shapeColor: false, 
-	closePath: false, 
-	x: 400, 
-	y: 240, 
-	sx: 0.9, 
-	sy: 0.4, 
+	],
+	lineWidth: 10,
+	shapeColor: false,
+	closePath: false,
+	x: 400,
+	y: 240,
+	sx: 0.9,
+	sy: 0.4,
 	rotation: 2
 });
 

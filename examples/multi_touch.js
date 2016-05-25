@@ -1,8 +1,8 @@
 import * as CAL from 'src/index.js';
 
-const group = new CAL.Group({
-	canvas: document.getElementById('CAL'), 
-	autoClearCanvas: true, 
+const group = new CAL.GroupInteractive({
+	canvas: document.getElementById('CAL'),
+	autoClearCanvas: true,
 	autoDrawCanvas: true
 });
 
@@ -17,8 +17,8 @@ class MouseViewer {
 		this.depth = 0;
 
 		this._initGestureValues = {
-			length: 0, 
-			rotation: 0, 
+			length: 0,
+			rotation: 0,
 			center: new CAL.Vector()
 		};
 
@@ -55,13 +55,13 @@ class MouseViewer {
 		rotation = this._initGestureValues.rotation - rotation;
 
 		let matrix = new CAL.Matrix({
-			x: pan.x, 
+			x: pan.x,
 			y: pan.y
 		}).rotateAroundAbsolute(rotation, center).scaleAroundAbsolute(scale, scale, center);
 
 		stepTransform.copyMatrix(matrix);
 
-		image.copyMatrix(initTransform.multiplyMatrix(stepTransform));		
+		image.copyMatrix(initTransform.multiplyMatrix(stepTransform));
 	}
 
 	touchEnd (touches) {

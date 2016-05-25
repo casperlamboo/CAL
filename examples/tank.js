@@ -1,6 +1,6 @@
 import * as CAL from 'src/index.js';
 
-let group = new CAL.Group({
+let group = new CAL.GroupInteractive({
 	canvas: document.getElementById('CAL')
 });
 
@@ -100,22 +100,22 @@ class Tank {
 		if (this.driving) {
 			let direction;
 			switch (this.direction[0]) {
-				case 'up_arrow': 
+				case 'up_arrow':
 					direction = new CAL.Vector(0, -1);
 					this.angle = 0;
 					break;
 
-				case 'right_arrow': 
+				case 'right_arrow':
 					direction = new CAL.Vector(1, 0);
 					this.angle = 1;
 					break;
 
-				case 'down_arrow': 
+				case 'down_arrow':
 					direction = new CAL.Vector(0, 1);
 					this.angle = 2;
 					break;
 
-				case 'left_arrow': 
+				case 'left_arrow':
 					direction = new CAL.Vector(-1, 0);
 					this.angle = 3;
 					break;

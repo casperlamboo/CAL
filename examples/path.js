@@ -1,8 +1,6 @@
 import * as CAL from 'src/index.js';
 
-console.log('loaded');
-
-const scene = new CAL.Group({
+const scene = new CAL.GroupInteractive({
 	canvas: document.getElementById('CAL')
 });
 
