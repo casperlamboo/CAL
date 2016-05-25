@@ -1,5 +1,6 @@
 import draw from './core/draw.js';
 import group from './core/group.js';
+import groupInteractive from './core/groupInteractive.js';
 import surface from './core/surface.js';
 import * as utils from './core/utils.js';
 import color from './math/color.js';
@@ -18,6 +19,7 @@ import polygon from './shapes/polygon.js';
 
 export let Draw = draw;
 export let Group = group;
+export let GroupInteractive = groupInteractive;
 export let Surface = surface;
 export let Utils = utils;
 export let Color = color;
