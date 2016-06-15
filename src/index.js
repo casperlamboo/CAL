@@ -40,4 +40,4 @@ window.requestAnimFrame = (() => {
 	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || ((callback) => {
 		setTimeout(callback, 1000/60);
 	});
-}());
+})();
