@@ -35,9 +35,3 @@ export let Shape = shape;
 export let CollisionMap = collisionMap;
 export let Star = star;
 export let Polygon = polygon;
-
-window.requestAnimFrame = (() => {
-	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || ((callback) => {
-		setTimeout(callback, 1000/60);
-	});
-})();
