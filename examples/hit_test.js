@@ -82,7 +82,7 @@ group.clearCanvas = true;
 group.drawCanvas = true;
 
 (function loop () {
-	requestAnimFrame(loop);
-
 	group.cycle();
+
+	window.requestAnimationFrame(loop);
 }());

@@ -52,5 +52,5 @@ for (let easing in CAL.Utils.Easings) {
 (function loop () {
 	group.cycle();
 
-	requestAnimFrame(loop);
+	window.requestAnimationFrame(loop);
 }());

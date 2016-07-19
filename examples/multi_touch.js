@@ -92,5 +92,5 @@ group.add(new MouseViewer(), image);
 (function loop () {
 	group.cycle();
 
-	requestAnimFrame(loop);
+	window.requestAnimationFrame(loop);
 }());

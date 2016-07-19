@@ -1,16 +1,26 @@
 {
   "jspm": {
-    "main": "./index.js",
+    "name": "CAL",
+    "main": "index.js",
     "directories": {
       "lib": "src"
     },
-    "dependencies": {
-      "casperlamboo/eventdispatcher": "github:casperlamboo/eventdispatcher@master"
-    },
+    "dependencies": {},
     "devDependencies": {
-      "babel": "npm:babel-core@^5.6.4",
       "babel-runtime": "npm:babel-runtime@^5.6.4",
-      "core-js": "npm:core-js@^0.9.17"
+      "core-js": "npm:core-js@^0.9.17",
+      "fs": "github:jspm/nodelibs-fs@^0.2.0-alpha",
+      "plugin-babel": "npm:systemjs-plugin-babel@^0.0.12",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha"
+    },
+    "overrides": {
+      "npm:babel-runtime@5.8.20": {
+        "main": false,
+        "dependencies": {},
+        "optionalDependencies": {
+          "core-js": "^1.2.0"
+        }
+      }
     }
   }
 }
