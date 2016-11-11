@@ -77,6 +77,8 @@ export default class Draw extends Matrix {
 	}
 
 	drawCrop (context, index = 0, x = 0, y = 0, maxWidth = this.width, maxHeight = this.height) {
+		if (this.image.width === 0 || this.image.height === 0) return this;
+
 		var sx = (index % this.numberWidth) * this.width;
 		var sy = Math.floor(index / this.numberWidth) * this.height;
 
@@ -120,6 +122,8 @@ export default class Draw extends Matrix {
 
 
 	drawSimple (context, index, x, y) {
+		if (this.image.width === 0 || this.image.height === 0) return this;
+
 		var sx = (index % this.numberWidth) * this.width;
 		var sy = Math.floor(index / this.numberWidth) * this.height;
 
@@ -161,6 +165,8 @@ export default class Draw extends Matrix {
 	}
 
 	drawScale (context, index, x, y, scaleX, scaleY) {
+		if (this.image.width === 0 || this.image.height === 0) return this;
+
 		let sx = (index % this.length) * this.width;
 		let sy = Math.floor(index / this.length) * this.height;
 
