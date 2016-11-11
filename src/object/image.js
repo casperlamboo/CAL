@@ -19,6 +19,9 @@ export default class Img extends Draw {
 				callback();
 			}
 		};
+		this.image.onerror = () => {
+			throw new Error(`Unable to load image: '${this.source}'`);
+		};
 		this.image.src = this.source;
 
 		return this;
