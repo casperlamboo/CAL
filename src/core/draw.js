@@ -6,8 +6,8 @@ export default class Draw extends Matrix {
 		super(options);
 
 		let {
-			visible = true, 
-			depth = 0, 
+			visible = true,
+			depth = 0,
 			alpha = 1
 		} = options;
 
@@ -33,9 +33,9 @@ export default class Draw extends Matrix {
 		let bottom = this.height - this.centerY;
 
 		let points = [
-			new Vector(left, top), 
-			new Vector(right, top), 
-			new Vector(left, bottom), 
+			new Vector(left, top),
+			new Vector(right, top),
+			new Vector(left, bottom),
 			new Vector(right, bottom)
 		];
 
@@ -54,11 +54,11 @@ export default class Draw extends Matrix {
 		}
 
 		return {
-			top: minY, 
-			left: minX, 
-			bottom: maxY, 
-			right: maxX, 
-			width: maxX - minX, 
+			top: minY,
+			left: minX,
+			bottom: maxY,
+			right: maxX,
+			width: maxX - minX,
 			height: maxY - minY
 		};
 	}
@@ -68,9 +68,9 @@ export default class Draw extends Matrix {
 		context.save();
 		matrix.setMatrixContext(context);
 		context.globalAlpha = this.alpha;
-		
+
 		this.drawSimple(context, this.index, 0, 0);
-		
+
 		context.restore();
 
 		return this;
@@ -175,7 +175,7 @@ export default class Draw extends Matrix {
 
 		context.drawImage(this.image, sx, sy, this.width, this.height, offsetX, offsetY, this.width * scaleX, this.height * scaleY);
 
-		return this;	
+		return this;
 	}
 
 	drawContain (context, index, x, y, width, height) {
