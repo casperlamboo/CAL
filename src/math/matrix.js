@@ -84,7 +84,7 @@ export default class Matrix {
 
 		this._sx = sx;
 
-		this.hasMatrix = false;;
+		this.hasMatrix = false;
 	}
 
 	get sy () {
@@ -104,7 +104,7 @@ export default class Matrix {
 
 		this._sy = sy;
 
-		this.hasMatrix = false;;
+		this.hasMatrix = false;
 	}
 
 	set scale (scale) {
@@ -115,7 +115,7 @@ export default class Matrix {
 		this._sx = scale;
 		this._sy = scale;
 
-		this.hasMatrix = false;;
+		this.hasMatrix = false;
 	}
 
 	get rotation () {
@@ -135,7 +135,7 @@ export default class Matrix {
 
 		this._rotation = rotation;
 
-		this.hasMatrix = false;;
+		this.hasMatrix = false;
 	}
 
 	get x () {
