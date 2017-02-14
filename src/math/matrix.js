@@ -361,7 +361,7 @@ export default class Matrix {
 
 	clone () {
 		const options = {};
-		
+
 		if (this.hasMatrix) options.matrix = [...this._matrix];
 		if (this.hasX) options.x = this._x;
 		if (this.hasY) options.y = this._y;
