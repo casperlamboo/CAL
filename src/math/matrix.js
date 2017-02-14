@@ -353,8 +353,8 @@ export default class Matrix {
 	scaleAroundRelative (sx, sy, center) {
 		const before = center.applyMatrix(this);
 
-		this.sx = sx;
-		this.sy = sy;
+		this.sx *= sx;
+		this.sy *= sy;
 
 		const after = center.applyMatrix(this);
 
