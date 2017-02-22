@@ -154,4 +154,8 @@ export default class Vector {
 		this.copy(json);
 		return this;
 	}
+	
+	toString () {
+		return `${this.x.toFixed(2)}x${this.y.toFixed(2)}`;
+	}
 };
