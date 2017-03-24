@@ -125,7 +125,7 @@ export default class Matrix {
 	get rotation () {
 		if (!this.hasRotation) {
 			this.hasRotation = true;
-			this._rotation = Math.atan2(-this._matrix[3], this._matrix[0]);
+			this._rotation = -Math.atan2(-this._matrix[3], this._matrix[0]);
 		}
 
 		return this._rotation;
@@ -196,8 +196,8 @@ export default class Matrix {
 			const cos = Math.cos(this._rotation);
 
 			this._matrix = [
-				this._sx * cos, this._sy * sin, this._x,
-				-this._sx * sin, this._sy * cos, this._y
+				this._sx * cos, this._sx * -sin, this._x,
+				this._sy * sin, this._sy *  cos, this._y
 			];
 		}
 
